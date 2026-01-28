@@ -1,0 +1,36 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import InventoryPage from './pages/InventoryPage';
+import ExerciseListPage from './pages/ExerciseListPage';
+import ExerciseFormPage from './pages/ExerciseFormPage';
+import RoutineListPage from './pages/RoutineListPage';
+import RoutineBuilderPage from './pages/RoutineBuilderPage';
+import ActiveWorkoutPage from './pages/ActiveWorkoutPage';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<InventoryPage />} />
+        
+        {/* Exercise Library Routes */}
+        <Route path="/exercises" element={<ExerciseListPage />} />
+        <Route path="/exercises/new" element={<ExerciseFormPage />} />
+        <Route path="/exercises/:id" element={<ExerciseFormPage />} />
+
+        {/* Routine Builder Routes */}
+        <Route path="/builder" element={<RoutineListPage />} />
+        <Route path="/builder/new" element={<RoutineBuilderPage />} />
+        <Route path="/builder/:id" element={<RoutineBuilderPage />} />
+        
+        {/* Workout Player */}
+        <Route path="/play/:id" element={<ActiveWorkoutPage />} />
+
+        {/* Placeholders */}
+        <Route path="/train" element={<RoutineListPage />} /> 
+        <Route path="/settings" element={<InventoryPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
