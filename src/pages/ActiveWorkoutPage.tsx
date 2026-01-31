@@ -4,6 +4,8 @@ import { useRoutines } from '../hooks/useRoutines';
 import { useExercises } from '../hooks/useExercises';
 import { Layout } from '../components/ui/Layout';
 import { Button } from '../components/ui/Button';
+import { TimerInput } from '../components/ui/TimerInput';
+import { Stepper } from '../components/ui/Stepper';
 import { Icon, cn } from '../components/ui/Icon';
 import type { Routine, WorkoutSet } from '../types';
 
@@ -39,7 +41,6 @@ export default function ActiveWorkoutPage() {
   const [actualWeight, setActualWeight] = useState<number>(0);
   const [actualReps, setActualReps] = useState<number>(0);
   const [actualTime, setActualTime] = useState<number>(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
 
   useEffect(() => {
@@ -191,13 +192,12 @@ export default function ActiveWorkoutPage() {
 
       {/* Progress */}
       <div className="px-6 mb-6">
-        <div className="h-1 w-full bg-gray-200 dark:bg-surface-highlight rounded-full overflow-hidden">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }}></div>
-        </div>
-        <div className="flex justify-between mt-1 text-xs text-gray-400">
-           <span>Set {currentStep.setIndex + 1} of {currentStep.totalSets}</span>
-           <span>{(steps.length - currentStepIndex - 1)} remaining</span>
-        </div>
+        <Stepper 
+          currentStep={currentStepIndex + 1} 
+          totalSteps={steps.length}
+          leftLabel={`Set ${currentStep.setIndex + 1} of ${currentStep.totalSets}`}
+          rightLabel={`${(steps.length - currentStepIndex - 1)} remaining`}
+        />
       </div>
 
       {/* Main Content */}
