@@ -1,28 +1,30 @@
 import { useState, useMemo } from 'react';
 import { useInventory } from '@/hooks/useInventory';
+import { useTags } from '@/hooks/useTags';
 import { Layout } from '@/components/ui/Layout';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Tag } from '@/components/ui/Tag';
 import { Card } from '@/components/ui/Card';
 import { Icon } from '@/components/ui/Icon';
+import { TagSelector } from '@/components/ui/TagSelector';
 import { cn } from '@/lib/utils';
 import type { InventoryItem, InventoryCondition, InventoryStatus } from '@/types';
 
 export default function InventoryPage() {
   const { items, loading, addItem, updateItem, deleteItem } = useInventory();
+  const { tags } = useTags();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'available' | 'checked_out'>('all');
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [activeTagId, setActiveTagId] = useState<number | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
-  // Derived state for tags
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    items.forEach(item => item.tags.forEach(tag => tags.add(tag)));
-    return Array.from(tags);
-  }, [items]);
+  // Derived state for tags present in current inventory
+  const inventoryTags = useMemo(() => {
+    const ids = new Set<number>();
+    items.forEach(item => item.tagIds?.forEach(id => ids.add(id)));
+    return tags.filter(t => ids.has(t.id!));
+  }, [items, tags]);
 
   const filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
@@ -31,7 +33,7 @@ export default function InventoryPage() {
       : filterStatus === 'available' 
         ? item.status === 'available'
         : item.status !== 'available'; // Simplified logic
-    const matchesTag = activeTag ? item.tags.includes(activeTag) : true;
+    const matchesTag = activeTagId ? item.tagIds?.includes(activeTagId) : true;
     return matchesSearch && matchesStatus && matchesTag;
   });
 
@@ -107,14 +109,21 @@ export default function InventoryPage() {
 
       <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar pb-2 pt-1 border-t border-gray-200 dark:border-surface-highlight/50">
         <div className="flex items-center pr-2 text-gray-400 dark:text-gray-500 text-xs font-semibold uppercase tracking-wider shrink-0">Tags:</div>
-        {allTags.map(tag => (
-          <Tag 
-            key={tag} 
-            label={tag} 
-            icon="sell" 
-            variant={activeTag === tag ? 'primary' : 'default'} 
-            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-          />
+        {inventoryTags.map(tag => (
+          <button
+            key={tag.id}
+            onClick={() => setActiveTagId(activeTagId === tag.id ? null : tag.id!)}
+            className={cn(
+              "flex-none flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
+              activeTagId === tag.id 
+                ? "bg-primary/10 border-primary text-primary" 
+                : "bg-surface-light dark:bg-surface-dark border-gray-200 dark:border-surface-highlight text-gray-500 dark:text-gray-400"
+            )}
+            style={activeTagId === tag.id ? { color: tag.color, borderColor: tag.color, backgroundColor: `${tag.color}15` } : {}}
+          >
+            <Icon name="sell" size={14} />
+            {tag.name}
+          </button>
         ))}
       </div>
 
@@ -151,12 +160,24 @@ export default function InventoryPage() {
                 </button>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 mt-3 pl-[64px]">
-              {item.tags.map(tag => (
-                <span key={tag} className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-surface-highlight text-gray-600 dark:text-gray-400 text-[10px] font-medium border border-gray-200 dark:border-gray-700">
-                  {tag}
-                </span>
-              ))}
+            <div className="flex flex-wrap gap-2 mt-3 pl-16">
+              {(item.tagIds || []).map(tagId => {
+                const tag = tags.find(t => t.id === tagId);
+                if (!tag) return null;
+                return (
+                  <span 
+                    key={tagId} 
+                    className="px-2 py-0.5 rounded-md text-[10px] font-medium border"
+                    style={{ 
+                      backgroundColor: `${tag.color}15`, 
+                      color: tag.color,
+                      borderColor: `${tag.color}30`
+                    }}
+                  >
+                    {tag.name}
+                  </span>
+                );
+              })}
             </div>
           </Card>
         ))}
@@ -193,7 +214,7 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
   const [status, setStatus] = useState<InventoryStatus>(item?.status || 'available');
   const [condition, setCondition] = useState<InventoryCondition>(item?.condition || 'good');
   const [quantity, setQuantity] = useState(item?.quantity || 1);
-  const [tags, setTags] = useState<string>(item?.tags.join(', ') || '');
+  const [tagIds, setTagIds] = useState<number[]>(item?.tagIds || []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,13 +224,13 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
       status,
       condition,
       quantity,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+      tagIds,
     });
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-surface-highlight">
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-surface-highlight my-8">
         <h2 className="text-xl font-bold mb-4">{item ? 'Edit Item' : 'New Item'}</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input label="Name" value={name} onChange={e => setName(e.target.value)} required />
@@ -217,32 +238,39 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
              <Input label="Icon (Symbol)" value={icon} onChange={e => setIcon(e.target.value)} />
              <Input label="Quantity" type="number" value={quantity} onChange={e => setQuantity(Number(e.target.value))} />
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Condition</label>
-            <select 
-              value={condition} 
-              onChange={e => setCondition(e.target.value as InventoryCondition)}
-              className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4"
-            >
-              <option value="new">New</option>
-              <option value="good">Good</option>
-              <option value="worn">Worn</option>
-              <option value="poor">Poor</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Condition</label>
+              <select 
+                value={condition} 
+                onChange={e => setCondition(e.target.value as InventoryCondition)}
+                className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4 text-sm"
+              >
+                <option value="new">New</option>
+                <option value="good">Good</option>
+                <option value="worn">Worn</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Status</label>
+              <select 
+                value={status} 
+                onChange={e => setStatus(e.target.value as InventoryStatus)}
+                className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4 text-sm"
+              >
+                <option value="available">Available</option>
+                <option value="checked_out">Checked Out</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
           </div>
-           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Status</label>
-            <select 
-              value={status} 
-              onChange={e => setStatus(e.target.value as InventoryStatus)}
-              className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4"
-            >
-              <option value="available">Available</option>
-              <option value="checked_out">Checked Out</option>
-              <option value="maintenance">Maintenance</option>
-            </select>
-          </div>
-          <Input label="Tags (comma separated)" value={tags} onChange={e => setTags(e.target.value)} />
+          
+          <TagSelector 
+            type="inventory" 
+            selectedTagIds={tagIds} 
+            onChange={setTagIds} 
+          />
           
           <div className="flex gap-3 mt-4">
             <Button type="button" variant="ghost" className="flex-1" onClick={onClose}>Cancel</Button>
