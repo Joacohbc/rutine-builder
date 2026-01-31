@@ -6,10 +6,12 @@ import RoutineListPage from './pages/RoutineListPage';
 import RoutineBuilderPage from './pages/RoutineBuilderPage';
 import ActiveWorkoutPage from './pages/ActiveWorkoutPage';
 import WorkInProgressPage from './pages/WorkInProgressPage';
+import { MobileExperienceWarning } from './components/MobileExperienceWarning';
 
 function App() {
   return (
     <HashRouter>
+      <MobileExperienceWarning />
       <Routes>
         <Route path="/" element={<InventoryPage />} />
         
