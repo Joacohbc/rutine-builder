@@ -4,9 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/rutine-builder/',
   plugins: [
     react(),
     tailwindcss(),
   ],
-  base: "https://joacohbc.github.io/rutine-builder/",
 })

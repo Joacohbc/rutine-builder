@@ -9,7 +9,7 @@ import WorkInProgressPage from './pages/WorkInProgressPage';
 
 function App() {
   return (
-    <HashRouter basename="https://joacohbc.github.io/rutine-builder/">
+    <HashRouter>
       <Routes>
         <Route path="/" element={<InventoryPage />} />
         
