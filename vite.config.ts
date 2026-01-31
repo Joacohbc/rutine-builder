@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: "/rutine-builder/",
+  base: "https://joacohbc.github.io/rutine-builder/",
 })
