@@ -1,15 +1,14 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import InventoryPage from './pages/InventoryPage';
 import ExerciseListPage from './pages/ExerciseListPage';
 import ExerciseFormPage from './pages/ExerciseFormPage';
 import RoutineListPage from './pages/RoutineListPage';
 import RoutineBuilderPage from './pages/RoutineBuilderPage';
 import ActiveWorkoutPage from './pages/ActiveWorkoutPage';
-import WorkInProgressPage from './pages/WorkInProgressPage';
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<InventoryPage />} />
         
@@ -28,9 +27,9 @@ function App() {
 
         {/* Placeholders */}
         <Route path="/train" element={<RoutineListPage />} /> 
-        <Route path="/settings" element={<WorkInProgressPage />} />
+        <Route path="/settings" element={<InventoryPage />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
