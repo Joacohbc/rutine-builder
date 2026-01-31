@@ -115,24 +115,12 @@ export default function ActiveWorkoutPage() {
     return () => clearInterval(interval);
   }, [isResting]);
 
-  // Active Exercise Timer
-  useEffect(() => {
-    let interval: any;
-    if (isTimerRunning && !isResting) {
-      interval = setInterval(() => {
-        setActualTime(t => t + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, isResting]);
-
 
   useEffect(() => {
     if (steps[currentStepIndex]) {
       setActualWeight(steps[currentStepIndex].targetWeight);
       setActualReps(steps[currentStepIndex].targetReps);
       setActualTime(0);
-      setIsTimerRunning(false);
     }
   }, [currentStepIndex, steps]);
 
@@ -248,26 +236,11 @@ export default function ActiveWorkoutPage() {
                     </div>
                  </div>
                  {currentStep.trackingType === 'time' ? (
-                   <div className="flex flex-col gap-2">
-                      <label className="text-center text-xs font-bold text-gray-400 uppercase">Time</label>
-                      <div className="flex flex-col items-center">
-                        <div 
-                          className="text-4xl font-bold font-mono py-2 cursor-pointer" 
-                          onClick={() => setIsTimerRunning(!isTimerRunning)}
-                        >
-                          {formatTime(actualTime)}
-                        </div>
-                        <div className="text-xs text-center text-gray-400 mt-1">Target: {formatTime(currentStep.targetTime)}</div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="mt-2"
-                          onClick={() => setIsTimerRunning(!isTimerRunning)}
-                        >
-                          <Icon name={isTimerRunning ? "pause" : "play_arrow"} />
-                        </Button>
-                      </div>
-                   </div>
+                   <TimerInput 
+                      value={actualTime}
+                      onChange={setActualTime}
+                      target={currentStep.targetTime}
+                   />
                  ) : (
                    <div className="flex flex-col gap-2">
                       <label className="text-center text-xs font-bold text-gray-400 uppercase">Reps</label>
