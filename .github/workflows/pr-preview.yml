@@ -27,12 +27,12 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install dependencies
         if: github.event.action != 'closed'
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build
         if: github.event.action != 'closed'
