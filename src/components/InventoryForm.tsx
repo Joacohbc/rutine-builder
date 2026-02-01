@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/Button';
 import { Form, useFormContext } from '@/components/ui/Form';
 import { TagSelector } from '@/components/ui/TagSelector';
+import { Modal } from '@/components/ui/Modal';
 import { inventoryValidators } from '@/lib/validations';
 import type { InventoryItem } from '@/types';
 
@@ -27,8 +28,14 @@ export function InventoryForm({ item, onClose, onSave }: InventoryFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-surface-highlight my-8">
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      variant="dialog"
+      size="sm"
+      showCloseButton={false}
+    >
+      <Modal.Body scrollable={false}>
         <h2 className="text-xl font-bold mb-4">{item ? 'Edit Item' : 'New Item'}</h2>
         <Form
           onSubmit={handleFormSubmit}
@@ -95,8 +102,8 @@ export function InventoryForm({ item, onClose, onSave }: InventoryFormProps) {
             <FormSubmitButton />
           </div>
         </Form>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }
 

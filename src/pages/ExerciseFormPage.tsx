@@ -6,6 +6,9 @@ import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { TagSelector } from '@/components/ui/TagSelector';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
 import { cn } from '@/lib/utils';
 import type { MediaItem, Exercise } from '@/types';
 
@@ -23,6 +26,11 @@ export default function ExerciseFormPage() {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<number[]>([]);
   const [defaultType, setDefaultType] = useState<Exercise['defaultType']>('weight_reps');
+  
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [youtubePromptOpen, setYoutubePromptOpen] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +87,8 @@ export default function ExerciseFormPage() {
     const isVideo = file.type.startsWith('video/');
 
     if (!isImage && !isVideo) {
-      alert('Only images and videos are supported.');
+      setAlertMessage('Only images and videos are supported.');
+      setAlertOpen(true);
       return;
     }
 
@@ -95,11 +104,18 @@ export default function ExerciseFormPage() {
   };
 
   const addYouTube = () => {
-    const url = prompt('Enter YouTube URL:');
-    if (!url) return;
+    setYoutubeUrl('');
+    setYoutubePromptOpen(true);
+  };
+
+  const handleYoutubeSubmit = () => {
+    if (!youtubeUrl) {
+      setYoutubePromptOpen(false);
+      return;
+    }
     
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
+    const match = youtubeUrl.match(regExp);
     const videoId = (match && match[2].length === 11) ? match[2] : null;
 
     if (videoId) {
@@ -109,8 +125,11 @@ export default function ExerciseFormPage() {
         url: videoId, // Store ID
         thumbnailUrl: `https://img.youtube.com/vi/${videoId}/0.jpg`
       }]);
+      setYoutubePromptOpen(false);
     } else {
-      alert('Invalid YouTube URL');
+      setAlertMessage('Invalid YouTube URL');
+      setAlertOpen(true);
+      setYoutubePromptOpen(false);
     }
   };
 
@@ -283,6 +302,59 @@ export default function ExerciseFormPage() {
           onChange={setTagIds}
         />
       </div>
+
+      {/* Alert Dialog */}
+      <ConfirmDialog
+        isOpen={alertOpen}
+        onClose={() => setAlertOpen(false)}
+        onConfirm={() => setAlertOpen(false)}
+        message={alertMessage}
+        confirmText="OK"
+        variant="warning"
+        showIcon={true}
+      />
+
+      {/* YouTube URL Prompt */}
+      <Modal
+        isOpen={youtubePromptOpen}
+        onClose={() => setYoutubePromptOpen(false)}
+        variant="dialog"
+        size="sm"
+        showCloseButton={false}
+      >
+        <Modal.Body scrollable={false}>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Add YouTube Video
+          </h2>
+          <Input
+            autoFocus
+            defaultValue={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            placeholder="Enter YouTube URL..."
+            className="mb-6"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleYoutubeSubmit();
+              }
+            }}
+          />
+          <div className="flex gap-3">
+            <Button
+              variant="ghost"
+              onClick={() => setYoutubePromptOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleYoutubeSubmit}
+              className="flex-1"
+            >
+              Add
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Layout>
   );
 }
