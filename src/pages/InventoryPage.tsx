@@ -77,8 +77,8 @@ export default function InventoryPage() {
           <Input 
             icon="search" 
             placeholder="Search equipment..." 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            defaultValue={search}
+            setValue={setSearch}
           />
         </div>
       }
@@ -216,7 +216,15 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
   const [quantity, setQuantity] = useState(item?.quantity || 1);
   const [tagIds, setTagIds] = useState<number[]>(item?.tagIds || []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Validator function
+  const validateQuantity = (value: string) => {
+    const num = parseInt(value, 10);
+    if (isNaN(num)) return { ok: false, message: 'Must be a valid number' };
+    if (num < 1) return { ok: false, message: 'Must be at least 1' };
+    return { ok: true };
+  };
+
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     onSave({
       name,
@@ -233,10 +241,16 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
       <div className="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-surface-highlight my-8">
         <h2 className="text-xl font-bold mb-4">{item ? 'Edit Item' : 'New Item'}</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input label="Name" value={name} onChange={e => setName(e.target.value)} required />
+          <Input label="Name" defaultValue={name} setValue={setName} required />
           <div className="grid grid-cols-2 gap-4">
-             <Input label="Icon (Symbol)" value={icon} onChange={e => setIcon(e.target.value)} />
-             <Input label="Quantity" type="number" value={quantity} onChange={e => setQuantity(Number(e.target.value))} />
+             <Input label="Icon (Symbol)" defaultValue={icon} setValue={setIcon} />
+             <Input 
+               label="Quantity" 
+               type="number"
+               defaultValue={quantity}
+               setValue={(v) => setQuantity(Number(v))}
+               validator={validateQuantity}
+             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
