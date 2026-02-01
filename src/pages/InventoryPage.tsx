@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Icon } from '@/components/ui/Icon';
 import { TagSelector } from '@/components/ui/TagSelector';
+import { Form, useFormContext } from '@/components/ui/Form';
 import { cn } from '@/lib/utils';
 import type { InventoryItem, InventoryCondition, InventoryStatus } from '@/types';
 
@@ -28,9 +29,9 @@ export default function InventoryPage() {
 
   const filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = filterStatus === 'all' 
-      ? true 
-      : filterStatus === 'available' 
+    const matchesStatus = filterStatus === 'all'
+      ? true
+      : filterStatus === 'available'
         ? item.status === 'available'
         : item.status !== 'available'; // Simplified logic
     const matchesTag = activeTagId ? item.tagIds?.includes(activeTagId) : true;
@@ -74,9 +75,9 @@ export default function InventoryPage() {
               <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border border-background-light dark:border-background-dark"></span>
             </button>
           </div>
-          <Input 
-            icon="search" 
-            placeholder="Search equipment..." 
+          <Input
+            icon="search"
+            placeholder="Search equipment..."
             defaultValue={search}
             setValue={setSearch}
           />
@@ -84,22 +85,22 @@ export default function InventoryPage() {
       }
     >
       <div className="flex gap-3 mb-2 overflow-x-auto no-scrollbar pb-2">
-        <Button 
-          variant={filterStatus === 'all' ? 'primary' : 'secondary'} 
-          size="sm" 
+        <Button
+          variant={filterStatus === 'all' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setFilterStatus('all')}
         >
           All Items
         </Button>
-        <Button 
-          variant={filterStatus === 'available' ? 'primary' : 'secondary'} 
+        <Button
+          variant={filterStatus === 'available' ? 'primary' : 'secondary'}
           size="sm"
           onClick={() => setFilterStatus('available')}
         >
           Available
         </Button>
-        <Button 
-          variant={filterStatus === 'checked_out' ? 'primary' : 'secondary'} 
+        <Button
+          variant={filterStatus === 'checked_out' ? 'primary' : 'secondary'}
           size="sm"
           onClick={() => setFilterStatus('checked_out')}
         >
@@ -115,8 +116,8 @@ export default function InventoryPage() {
             onClick={() => setActiveTagId(activeTagId === tag.id ? null : tag.id!)}
             className={cn(
               "flex-none flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
-              activeTagId === tag.id 
-                ? "bg-primary/10 border-primary text-primary" 
+              activeTagId === tag.id
+                ? "bg-primary/10 border-primary text-primary"
                 : "bg-surface-light dark:bg-surface-dark border-gray-200 dark:border-surface-highlight text-gray-500 dark:text-gray-400"
             )}
             style={activeTagId === tag.id ? { color: tag.color, borderColor: tag.color, backgroundColor: `${tag.color}15` } : {}}
@@ -152,7 +153,7 @@ export default function InventoryPage() {
                 </div>
               </div>
               <div className="shrink-0 pl-2 pt-1 flex gap-2">
-                 <button 
+                <button
                   onClick={(e) => { e.stopPropagation(); handleDelete(item.id!); }}
                   className="p-1 text-gray-400 hover:text-red-400"
                 >
@@ -165,11 +166,11 @@ export default function InventoryPage() {
                 const tag = tags.find(t => t.id === tagId);
                 if (!tag) return null;
                 return (
-                  <span 
-                    key={tagId} 
+                  <span
+                    key={tagId}
                     className="px-2 py-0.5 rounded-md text-[10px] font-medium border"
-                    style={{ 
-                      backgroundColor: `${tag.color}15`, 
+                    style={{
+                      backgroundColor: `${tag.color}15`,
                       color: tag.color,
                       borderColor: `${tag.color}30`
                     }}
@@ -182,18 +183,18 @@ export default function InventoryPage() {
           </Card>
         ))}
       </div>
-      
-      <Button 
-        variant="floating" 
+
+      <Button
+        variant="floating"
         onClick={() => { setEditingItem(null); setIsFormOpen(true); }}
       >
         <Icon name="add" size={32} />
       </Button>
 
       {isFormOpen && (
-        <InventoryForm 
-          item={editingItem} 
-          onClose={() => setIsFormOpen(false)} 
+        <InventoryForm
+          item={editingItem}
+          onClose={() => setIsFormOpen(false)}
           onSave={async (item) => {
             if (editingItem && editingItem.id) {
               await updateItem({ ...item, id: editingItem.id });
@@ -201,21 +202,25 @@ export default function InventoryPage() {
               await addItem(item);
             }
             setIsFormOpen(false);
-          }} 
+          }}
         />
       )}
     </Layout>
   );
 }
 
-function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, onClose: () => void, onSave: (item: Omit<InventoryItem, 'id'> & { id?: number }) => Promise<void> }) {
-  const [name, setName] = useState(item?.name || '');
-  const [icon, setIcon] = useState(item?.icon || 'fitness_center');
-  const [status, setStatus] = useState<InventoryStatus>(item?.status || 'available');
-  const [condition, setCondition] = useState<InventoryCondition>(item?.condition || 'good');
-  const [quantity, setQuantity] = useState(item?.quantity || 1);
-  const [tagIds, setTagIds] = useState<number[]>(item?.tagIds || []);
+function FormTagSelector() {
+  const { values, setFieldValue } = useFormContext();
+  return (
+    <TagSelector
+      type="inventory"
+      selectedTagIds={values.tagIds || []}
+      onChange={(ids) => setFieldValue('tagIds', ids)}
+    />
+  );
+}
 
+function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, onClose: () => void, onSave: (item: Omit<InventoryItem, 'id'> & { id?: number }) => Promise<void> }) {
   // Validator function
   const validateQuantity = (value: string) => {
     const num = parseInt(value, 10);
@@ -224,15 +229,14 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
     return { ok: true };
   };
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    e.preventDefault();
-    onSave({
-      name,
-      icon,
-      status,
-      condition,
-      quantity,
-      tagIds,
+  const handleFormSubmit = async (values: unknown) => {
+    await onSave({
+      name: values.name,
+      icon: values.icon,
+      status: values.status,
+      condition: values.condition,
+      quantity: Number(values.quantity),
+      tagIds: values.tagIds,
     });
   };
 
@@ -240,57 +244,52 @@ function InventoryForm({ item, onClose, onSave }: { item: InventoryItem | null, 
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
       <div className="bg-surface-light dark:bg-surface-dark w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-surface-highlight my-8">
         <h2 className="text-xl font-bold mb-4">{item ? 'Edit Item' : 'New Item'}</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input label="Name" defaultValue={name} setValue={setName} required />
+        <Form
+          onSubmit={handleFormSubmit}
+          className="flex flex-col gap-4"
+        >
+          <Form.Input name="name" label="Name" defaultValue={item?.name} required />
           <div className="grid grid-cols-2 gap-4">
-             <Input label="Icon (Symbol)" defaultValue={icon} setValue={setIcon} />
-             <Input 
-               label="Quantity" 
-               type="number"
-               defaultValue={quantity}
-               setValue={(v) => setQuantity(Number(v))}
-               validator={validateQuantity}
-             />
+            <Form.Input name="icon" label="Icon (Symbol)" defaultValue={item?.icon} />
+            <Form.Input
+              name="quantity"
+              label="Quantity"
+              type="number"
+              defaultValue={item?.quantity}
+              validator={validateQuantity}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Condition</label>
-              <select 
-                value={condition} 
-                onChange={e => setCondition(e.target.value as InventoryCondition)}
-                className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4 text-sm"
-              >
-                <option value="new">New</option>
-                <option value="good">Good</option>
-                <option value="worn">Worn</option>
-                <option value="poor">Poor</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Status</label>
-              <select 
-                value={status} 
-                onChange={e => setStatus(e.target.value as InventoryStatus)}
-                className="w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight px-4 text-sm"
-              >
-                <option value="available">Available</option>
-                <option value="checked_out">Checked Out</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
-            </div>
+            <Form.Select
+              name="condition"
+              label="Condition"
+              defaultValue={item?.condition}
+              options={[
+                { label: 'New', value: 'new' },
+                { label: 'Good', value: 'good' },
+                { label: 'Worn', value: 'worn' },
+                { label: 'Poor', value: 'poor' },
+              ]}
+            />
+            <Form.Select
+              name="status"
+              label="Status"
+              defaultValue={item?.status}
+              options={[
+                { label: 'Available', value: 'available' },
+                { label: 'Checked Out', value: 'checked_out' },
+                { label: 'Maintenance', value: 'maintenance' },
+              ]}
+            />
           </div>
-          
-          <TagSelector 
-            type="inventory" 
-            selectedTagIds={tagIds} 
-            onChange={setTagIds} 
-          />
-          
+
+          <FormTagSelector />
+
           <div className="flex gap-3 mt-4">
             <Button type="button" variant="ghost" className="flex-1" onClick={onClose}>Cancel</Button>
             <Button type="submit" className="flex-1">Save</Button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
