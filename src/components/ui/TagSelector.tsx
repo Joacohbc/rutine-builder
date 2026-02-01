@@ -128,7 +128,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
               <Icon name="sell" size={18} className="text-gray-400 group-focus-within:text-primary transition-colors" />
             </div>
             <Input
-              value={search}
+              defaultValue={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Add custom tag..."
               className="pl-10 pr-10 border-none bg-transparent focus:ring-0 h-8"
