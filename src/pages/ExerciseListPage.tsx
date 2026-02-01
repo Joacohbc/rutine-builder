@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExercises } from '@/hooks/useExercises';
+import { useTags } from '@/hooks/useTags';
 import { Layout } from '@/components/ui/Layout';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -9,13 +10,17 @@ import { Icon } from '@/components/ui/Icon';
 
 export default function ExerciseListPage() {
   const { exercises, loading, deleteExercise } = useExercises();
+  const { tags } = useTags();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   const filteredExercises = exercises.filter(ex => 
     ex.title.toLowerCase().includes(search.toLowerCase()) ||
     ex.muscleGroup?.toLowerCase().includes(search.toLowerCase()) ||
-    ex.tags?.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
+    ex.tagIds?.some(tagId => {
+      const tag = tags.find(t => t.id === tagId);
+      return tag?.name.toLowerCase().includes(search.toLowerCase());
+    })
   );
 
   return (
@@ -28,7 +33,7 @@ export default function ExerciseListPage() {
           <Input 
             icon="search" 
             placeholder="Search exercises..." 
-            value={search}
+            defaultValue={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
@@ -59,19 +64,31 @@ export default function ExerciseListPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{ex.title}</h3>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {/* Show primary muscle group as a tag if available, else first tag */}
+                    {/* Show primary muscle group as a tag if available */}
                     {ex.muscleGroup && (
-                        <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-md font-medium">
                             {ex.muscleGroup}
                         </span>
                     )}
-                    {/* Show other tags count or next tag? Let's show up to 2 tags */}
-                    {ex.tags?.filter(t => t !== ex.muscleGroup).slice(0, 2).map(tag => (
-                        <span key={tag} className="text-xs text-gray-500 bg-gray-100 dark:bg-surface-highlight px-2 py-0.5 rounded-md">
-                            {tag}
-                        </span>
-                    ))}
-                    {ex.tags && ex.tags.length > (ex.muscleGroup ? 3 : 2) && (
+                    {/* Show tags */}
+                    {(ex.tagIds || []).slice(0, 2).map(tagId => {
+                        const tag = tags.find(t => t.id === tagId);
+                        if (!tag) return null;
+                        return (
+                          <span 
+                            key={tagId} 
+                            className="text-[10px] px-2 py-0.5 rounded-md font-medium border"
+                            style={{ 
+                              backgroundColor: `${tag.color}15`, 
+                              color: tag.color,
+                              borderColor: `${tag.color}30`
+                            }}
+                          >
+                              {tag.name}
+                          </span>
+                        );
+                    })}
+                    {ex.tagIds && ex.tagIds.length > 2 && (
                         <span className="text-xs text-gray-400 px-1">...</span>
                     )}
                   </div>

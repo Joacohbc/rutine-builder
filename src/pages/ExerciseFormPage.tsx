@@ -5,6 +5,7 @@ import { useInventory } from '@/hooks/useInventory';
 import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { TagSelector } from '@/components/ui/TagSelector';
 import { cn } from '@/lib/utils';
 import type { MediaItem, Exercise } from '@/types';
 
@@ -16,10 +17,8 @@ export default function ExerciseFormPage() {
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  // We keep muscleGroup state but populate it from tags mainly
   const [muscleGroup, setMuscleGroup] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
+  const [tagIds, setTagIds] = useState<number[]>([]);
   
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<number[]>([]);
@@ -38,7 +37,7 @@ export default function ExerciseFormPage() {
          
         setMuscleGroup(ex.muscleGroup);
          
-        setTags(ex.tags || (ex.muscleGroup ? [ex.muscleGroup] : []));
+        setTagIds(ex.tagIds || []);
          
         setMedia(ex.media);
          
@@ -50,29 +49,12 @@ export default function ExerciseFormPage() {
   }, [id, exercises]);
 
   const handleSave = async () => {
-    // Determine muscle group from tags if empty, or keep existing.
-    // Logic: If muscleGroup is empty, take first tag.
-    // If not empty, check if it is in tags. If not, add it to tags (implicit sync).
-    
-    let finalMuscleGroup = muscleGroup;
-    const finalTags = [...tags];
-
-    if (!finalMuscleGroup && finalTags.length > 0) {
-        finalMuscleGroup = finalTags[0];
-    }
-    
-    // Ensure we satisfy the requirement "Muscles is a Type of tags"
-    // So if muscleGroup is set, it should probably be in tags.
-    if (finalMuscleGroup && !finalTags.includes(finalMuscleGroup)) {
-        finalTags.unshift(finalMuscleGroup);
-    }
-
     const exerciseData: Exercise = {
       id: id ? Number(id) : undefined,
       title,
       description,
-      muscleGroup: finalMuscleGroup,
-      tags: finalTags,
+      muscleGroup, // Keep as is or derive from tags if needed
+      tagIds,
       media,
       primaryEquipmentIds: selectedEquipment,
       defaultType
@@ -144,27 +126,6 @@ export default function ExerciseFormPage() {
     }
   };
 
-  const addTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag('');
-      // If it's the first tag, set it as muscleGroup automatically if empty
-      if (!muscleGroup) {
-          setMuscleGroup(newTag.trim());
-      }
-    }
-  };
-  
-  const removeTag = (tagToRemove: string) => {
-      setTags(tags.filter(t => t !== tagToRemove));
-      if (muscleGroup === tagToRemove) {
-          setMuscleGroup('');
-      }
-  };
-
-  // Predefined tags/muscles for suggestion (optional, but good for UX)
-  const SUGGESTED_TAGS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Abs', 'Cardio', 'Strength', 'Hypertrophy'];
-
   return (
     <Layout
       header={
@@ -200,7 +161,7 @@ export default function ExerciseFormPage() {
                     value={description} 
                     onChange={e => setDescription(e.target.value)} 
                     placeholder="Add cues, form tips, or setup instructions..."
-                    className="w-full bg-transparent text-sm text-gray-900 dark:text-gray-300 placeholder-gray-500 outline-none resize-none min-h-[100px]"
+                    className="w-full bg-transparent text-sm text-gray-900 dark:text-gray-300 placeholder-gray-500 outline-none resize-none min-h-25"
                 />
             </div>
         </section>
@@ -316,47 +277,11 @@ export default function ExerciseFormPage() {
         </section>
 
         {/* Muscles & Tags */}
-        <section className="flex flex-col gap-2 pb-8">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Muscles & Tags</label>
-            <div className="bg-surface-input rounded-2xl p-4">
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {tags.map(tag => (
-                        <div key={tag} className="bg-primary/20 text-primary px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
-                            {tag}
-                            <button onClick={() => removeTag(tag)} className="hover:text-white">
-                                <Icon name="close" size={14} />
-                            </button>
-                        </div>
-                    ))}
-                    
-                    {/* Suggested tags that aren't selected yet */}
-                    {SUGGESTED_TAGS.filter(t => !tags.includes(t)).slice(0, 3).map(t => (
-                        <button 
-                            key={t}
-                            onClick={() => { setTags([...tags, t]); if(!muscleGroup) setMuscleGroup(t); }} 
-                            className="bg-surface-highlight text-gray-400 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-surface-highlight/80 hover:text-gray-200 transition-colors"
-                        >
-                            {t}
-                        </button>
-                    ))}
-                </div>
-                
-                <div className="flex items-center gap-2 border-t border-gray-700 pt-3">
-                    <Icon name="label" className="text-gray-500" />
-                    <input 
-                        type="text"
-                        value={newTag}
-                        onChange={e => setNewTag(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && addTag()}
-                        placeholder="Add custom tag or muscle..."
-                        className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 outline-none"
-                    />
-                    <button onClick={addTag} className="text-gray-400 hover:text-white">
-                        <Icon name="add" />
-                    </button>
-                </div>
-            </div>
-        </section>
+        <TagSelector
+          type="exercise"
+          selectedTagIds={tagIds}
+          onChange={setTagIds}
+        />
       </div>
     </Layout>
   );

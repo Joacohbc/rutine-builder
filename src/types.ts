@@ -1,11 +1,17 @@
 export type InventoryStatus = 'available' | 'checked_out' | 'maintenance';
 export type InventoryCondition = 'new' | 'good' | 'worn' | 'poor';
 
+export interface Tag {
+  id?: number;
+  name: string;
+  color: string;
+}
+
 export interface InventoryItem {
   id?: number;
   name: string;
   icon: string; // Material Symbol name
-  tags: string[];
+  tagIds: number[];
   status: InventoryStatus;
   condition: InventoryCondition;
   quantity: number;
@@ -26,7 +32,7 @@ export interface Exercise {
   title: string;
   description?: string;
   muscleGroup: string; // e.g., 'Chest', 'Legs' - Maintained for compatibility, can be derived from tags
-  tags: string[];
+  tagIds: number[];
   primaryEquipmentIds: number[]; // Refs to Inventory
   media: MediaItem[];
   defaultType: 'weight_reps' | 'time' | 'bodyweight_reps';
