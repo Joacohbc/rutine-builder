@@ -2,10 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/ui/Layout';
 import { Icon } from '@/components/ui/Icon';
+import { Modal } from '@/components/ui/Modal';
+import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState('dark');
+  const [language, setLanguage] = useState('English');
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  const languages = [
+    { label: 'English', value: 'English' },
+    { label: 'Español', value: 'Español' },
+  ];
 
   return (
     <Layout
@@ -30,7 +39,10 @@ export default function SettingsPage() {
           <div className="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
             {/* ListItem: Language */}
             <div className="relative flex flex-col w-full">
-              <button className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+              <button
+                onClick={() => setShowLanguageModal(true)}
+                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
                     <Icon name="language" size={18} />
@@ -38,7 +50,7 @@ export default function SettingsPage() {
                   <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">Language</p>
                 </div>
                 <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <p className="text-sm font-normal leading-normal">English</p>
+                  <p className="text-sm font-normal leading-normal">{language}</p>
                   <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </button>
@@ -112,6 +124,44 @@ export default function SettingsPage() {
           <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Local Data Storage Active</p>
         </div>
       </div>
+
+      <Modal
+        isOpen={showLanguageModal}
+        onClose={() => setShowLanguageModal(false)}
+        variant="bottom-sheet"
+      >
+        <div className="flex flex-col p-4">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Select Language</h3>
+          <div className="flex flex-col gap-2">
+            {languages.map((lang) => (
+              <button
+                key={lang.value}
+                onClick={() => {
+                  setLanguage(lang.value);
+                  setShowLanguageModal(false);
+                }}
+                className={cn(
+                  "flex items-center justify-between p-4 rounded-xl transition-all",
+                  language === lang.value
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
+                )}
+              >
+                <span className="font-medium">{lang.label}</span>
+                {language === lang.value && (
+                  <Icon name="check" size={20} />
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowLanguageModal(false)}
+            className="mt-4 w-full py-4 text-center text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
     </Layout>
   );
 }
