@@ -47,9 +47,9 @@ export function InventoryForm({ item, onClose, onSave }: InventoryFormProps) {
           required
         />
         <div className="grid grid-cols-2 gap-4">
-          <Form.Input 
+          <Form.IconPicker
             name="icon"
-            label="Icon (Symbol)"
+            label="Icon"
             defaultValue={item?.icon}
             validator={inventoryValidators.icon}
           />
