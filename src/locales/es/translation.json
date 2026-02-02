@@ -95,5 +95,16 @@
       "checked_out": "Prestado",
       "maintenance": "Mantenimiento"
     }
+  },
+  "tags": {
+    "defaults": {
+      "Chest": "Pecho",
+      "Back": "Espalda",
+      "Legs": "Piernas",
+      "Shoulders": "Hombros",
+      "Heavy": "Pesado",
+      "Favorite": "Favorito",
+      "Mobility": "Movilidad"
+    }
   }
 }

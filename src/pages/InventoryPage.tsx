@@ -11,6 +11,7 @@ import { InventoryForm } from '@/components/InventoryForm';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import { cn } from '@/lib/utils';
 import { getInventoryConditionColors } from '@/lib/typeColors';
+import { getDisplayTag } from '@/lib/tagUtils';
 import type { InventoryItem, InventoryStatus } from '@/types';
 
 type FilterStatus = InventoryStatus | 'all';
@@ -117,7 +118,7 @@ export default function InventoryPage() {
             style={activeTagId === tag.id ? { color: tag.color, borderColor: tag.color, backgroundColor: `${tag.color}15` } : {}}
           >
             <Icon name="sell" size={14} />
-            {tag.name}
+            {getDisplayTag(tag, t)}
           </button>
         ))}
       </div>
@@ -169,7 +170,7 @@ export default function InventoryPage() {
                       borderColor: `${tag.color}30`
                     }}
                   >
-                    {tag.name}
+                    {getDisplayTag(tag, t)}
                   </span>
                 );
               })}

@@ -95,5 +95,16 @@
       "checked_out": "Checked Out",
       "maintenance": "Maintenance"
     }
+  },
+  "tags": {
+    "defaults": {
+      "Chest": "Chest",
+      "Back": "Back",
+      "Legs": "Legs",
+      "Shoulders": "Shoulders",
+      "Heavy": "Heavy",
+      "Favorite": "Favorite",
+      "Mobility": "Mobility"
+    }
   }
 }
