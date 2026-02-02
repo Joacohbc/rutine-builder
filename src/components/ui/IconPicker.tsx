@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
@@ -25,14 +25,6 @@ export function IconPicker({
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'common' | 'all'>('common');
-
-  // Reset state when opening
-  useEffect(() => {
-    if (isOpen) {
-      setSearch('');
-      setActiveTab('common');
-    }
-  }, [isOpen]);
 
   const filteredIcons = useMemo(() => {
     const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -61,7 +53,11 @@ export function IconPicker({
         )}
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            setIsOpen(true);
+            setSearch('');
+            setActiveTab('common');
+          }}
           className={cn(
             "w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all text-left",
             error

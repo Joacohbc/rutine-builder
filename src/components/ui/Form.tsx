@@ -194,6 +194,7 @@ function FormSelect({ name, validator, ...props }: FormSelectProps) {
 // --- Form.IconPicker ---
 interface FormIconPickerProps extends Omit<ComponentProps<typeof IconPicker>, 'value' | 'onChange' | 'error'> {
   name: string;
+  defaultValue?: string;
   validator?: (value: string) => { ok: boolean; message?: string };
 }
 
