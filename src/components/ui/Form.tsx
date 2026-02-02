@@ -1,7 +1,9 @@
 import type { ReactNode, ComponentProps } from 'react';
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import type { ValidationResult } from '@/lib/validations';
 
 type FormFieldValues = Record<string, unknown>;
 type FormErrors = Record<string, string | undefined>;
@@ -102,7 +104,7 @@ export function Form({ children, onSubmit, className }: FormProps) {
 interface FormFieldProps {
   name: string;
   defaultValue?: unknown;
-  validator?: (value: unknown) => { ok: boolean; message?: string };
+  validator?: (value: unknown) => ValidationResult;
   children: (field: {
     value: unknown;
     setValue: (value: unknown) => void;
@@ -114,6 +116,7 @@ interface FormFieldProps {
 
 function FormField({ name, defaultValue, validator, children }: FormFieldProps) {
   const { values, errors, setFieldValue, setFieldError, registerField, unregisterField } = useFormContext();
+  const { t } = useTranslation();
   
   const value = values[name] !== undefined ? values[name] : (defaultValue ?? '');
 
@@ -125,9 +128,14 @@ function FormField({ name, defaultValue, validator, children }: FormFieldProps) 
   useEffect(() => {
     if (validator) {
       const res = validator(value);
-      setFieldError(name, res.ok ? undefined : (res.message || 'Invalid value'));
+      if (res.ok) {
+        setFieldError(name, undefined);
+      } else {
+        const errorMsg = res.error ? t(res.error.key, res.error.params) : 'Invalid value';
+        setFieldError(name, errorMsg);
+      }
     }
-  }, [name, value, validator, setFieldError]);
+  }, [name, value, validator, setFieldError, t]);
 
   const setValue = useCallback((newValue: unknown) => {
     setFieldValue(name, newValue);
@@ -139,7 +147,7 @@ function FormField({ name, defaultValue, validator, children }: FormFieldProps) 
 // --- Form.Input ---
 interface FormInputProps extends Omit<ComponentProps<typeof Input>, 'value' | 'onChange' | 'error'> {
   name: string;
-  validator?: (value: string) => { ok: boolean; message?: string };
+  validator?: (value: string) => ValidationResult;
 }
 
 function FormInput({ name, validator, defaultValue, ...props }: FormInputProps) {
@@ -166,7 +174,7 @@ function FormInput({ name, validator, defaultValue, ...props }: FormInputProps) 
 // --- Form.Select ---
 interface FormSelectProps extends Omit<ComponentProps<typeof Select>, 'value' | 'onChange' | 'error'> {
   name: string;
-  validator?: (value: string) => { ok: boolean; message?: string };
+  validator?: (value: string) => ValidationResult;
 }
 
 function FormSelect({ name, validator, ...props }: FormSelectProps) {

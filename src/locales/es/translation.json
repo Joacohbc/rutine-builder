@@ -1,0 +1,58 @@
+{
+  "common": {
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando..."
+  },
+  "validations": {
+    "required": "Este campo es requerido",
+    "minLength": "Debe tener al menos {{min}} caracteres",
+    "maxLength": "Debe tener como máximo {{max}} caracteres",
+    "number": "Debe ser un número válido",
+    "integer": "Debe ser un número entero válido",
+    "min": "Debe ser al menos {{min}}",
+    "max": "Debe ser como máximo {{max}}",
+    "email": "Debe ser una dirección de correo electrónico válida",
+    "url": "Debe ser una URL válida",
+    "iconTooLong": "El nombre del icono es demasiado largo"
+  },
+  "routineBuilder": {
+    "newRoutine": "Nueva Rutina",
+    "series": "Serie {{count}}",
+    "union": "Unión 🔗",
+    "standard": "Estándar",
+    "superset": "Superserie",
+    "switchToReps": "Cambiar a Repeticiones",
+    "switchToTime": "Cambiar a Tiempo",
+    "set": "Set",
+    "kg": "kg",
+    "fail": "Fallo",
+    "duration": "Duración",
+    "reps": "Reps",
+    "addSet": "+ Añadir Set",
+    "addExercise": "Añadir Ejercicio",
+    "addSeries": "+ Añadir Serie"
+  },
+  "inventory": {
+    "titleEdit": "Editar Item",
+    "titleNew": "Nuevo Item",
+    "name": "Nombre",
+    "icon": "Icono (Símbolo)",
+    "quantity": "Cantidad",
+    "condition": "Condición",
+    "status": "Estado",
+    "tags": "Etiquetas",
+    "conditions": {
+      "new": "Nuevo",
+      "good": "Bueno",
+      "worn": "Desgastado",
+      "poor": "Pobre"
+    },
+    "statuses": {
+      "available": "Disponible",
+      "checked_out": "Prestado",
+      "maintenance": "Mantenimiento"
+    }
+  }
+}

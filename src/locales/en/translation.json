@@ -1,0 +1,58 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving..."
+  },
+  "validations": {
+    "required": "This field is required",
+    "minLength": "Must be at least {{min}} characters",
+    "maxLength": "Must be at most {{max}} characters",
+    "number": "Must be a valid number",
+    "integer": "Must be a valid integer",
+    "min": "Must be at least {{min}}",
+    "max": "Must be at most {{max}}",
+    "email": "Must be a valid email address",
+    "url": "Must be a valid URL",
+    "iconTooLong": "Icon name is too long"
+  },
+  "routineBuilder": {
+    "newRoutine": "New Routine",
+    "series": "Series {{count}}",
+    "union": "Union 🔗",
+    "standard": "Standard",
+    "superset": "Superset",
+    "switchToReps": "Switch to Reps",
+    "switchToTime": "Switch to Time",
+    "set": "Set",
+    "kg": "kg",
+    "fail": "Fail",
+    "duration": "Duration",
+    "reps": "Reps",
+    "addSet": "+ Add Set",
+    "addExercise": "Add Exercise",
+    "addSeries": "+ Add Series"
+  },
+  "inventory": {
+    "titleEdit": "Edit Item",
+    "titleNew": "New Item",
+    "name": "Name",
+    "icon": "Icon (Symbol)",
+    "quantity": "Quantity",
+    "condition": "Condition",
+    "status": "Status",
+    "tags": "Tags",
+    "conditions": {
+      "new": "New",
+      "good": "Good",
+      "worn": "Worn",
+      "poor": "Poor"
+    },
+    "statuses": {
+      "available": "Available",
+      "checked_out": "Checked Out",
+      "maintenance": "Maintenance"
+    }
+  }
+}
