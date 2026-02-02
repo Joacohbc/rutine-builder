@@ -2,6 +2,7 @@ import type { ReactNode, ComponentProps } from 'react';
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { IconPicker } from '@/components/ui/IconPicker';
 
 type FormFieldValues = Record<string, unknown>;
 type FormErrors = Record<string, string | undefined>;
@@ -190,6 +191,32 @@ function FormSelect({ name, validator, ...props }: FormSelectProps) {
   );
 }
 
+// --- Form.IconPicker ---
+interface FormIconPickerProps extends Omit<ComponentProps<typeof IconPicker>, 'value' | 'onChange' | 'error'> {
+  name: string;
+  validator?: (value: string) => { ok: boolean; message?: string };
+}
+
+function FormIconPicker({ name, validator, defaultValue, ...props }: FormIconPickerProps) {
+  return (
+    <FormField
+      name={name}
+      defaultValue={defaultValue}
+      validator={validator ? (v) => validator(String(v)) : undefined}
+    >
+      {({ setValue, error, value }) => (
+        <IconPicker
+          {...props}
+          value={String(value || '')}
+          error={error}
+          onChange={(v) => setValue(v)}
+        />
+      )}
+    </FormField>
+  );
+}
+
 Form.Field = FormField;
 Form.Input = FormInput;
 Form.Select = FormSelect;
+Form.IconPicker = FormIconPicker;
