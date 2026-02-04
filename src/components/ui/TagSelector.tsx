@@ -240,7 +240,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
              onClick={() => setIsModalOpen(false)}
              className="w-full bg-primary text-white font-bold py-4 rounded-2xl"
           >
-            Done
+            {t('common.done', 'Done')}
           </button>
         </div>
       </Modal>

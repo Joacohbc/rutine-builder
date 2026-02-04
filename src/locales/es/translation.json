@@ -1,5 +1,6 @@
 {
   "common": {
+    "done": "Listo",
     "confirm": "Confirmar",
     "create": "Crear",
     "loading": "Cargando...",
