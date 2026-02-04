@@ -97,14 +97,13 @@
     }
   },
   "tags": {
-    "defaults": {
-      "Chest": "Pecho",
-      "Back": "Espalda",
-      "Legs": "Piernas",
-      "Shoulders": "Hombros",
-      "Heavy": "Pesado",
-      "Favorite": "Favorito",
-      "Mobility": "Movilidad"
-    }
+  },
+  "mobileWarning": {
+    "title": "Solo para Teléfonos",
+    "description": "Esta aplicación está pensada para el uso en vertical y desde teléfonos."
+  },
+  "workInProgress": {
+    "title": "En Construcción",
+    "description": "Esta función está actualmente en desarrollo. ¡Vuelve pronto para ver actualizaciones!"
   }
 }

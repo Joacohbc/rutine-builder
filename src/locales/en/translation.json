@@ -97,14 +97,13 @@
     }
   },
   "tags": {
-    "defaults": {
-      "Chest": "Chest",
-      "Back": "Back",
-      "Legs": "Legs",
-      "Shoulders": "Shoulders",
-      "Heavy": "Heavy",
-      "Favorite": "Favorite",
-      "Mobility": "Mobility"
-    }
+  },
+  "mobileWarning": {
+    "title": "Mobile Only",
+    "description": "This application is designed for vertical use and on mobile phones."
+  },
+  "workInProgress": {
+    "title": "Work In Progress",
+    "description": "This feature is currently being developed. Check back soon for updates!"
   }
 }
