@@ -5,7 +5,10 @@ export type ValidationResult =
 // Generic validators
 export const validators = {
   required: (value: unknown): ValidationResult => {
-    if (value === null || value === undefined || String(value).trim() === '') {
+    if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {
+      return { ok: false, error: { key: 'validations.required' } };
+    }
+    if (Array.isArray(value) && value.length === 0) {
       return { ok: false, error: { key: 'validations.required' } };
     }
     return { ok: true };
@@ -54,7 +57,7 @@ export const validators = {
     return { ok: true };
   },
 
-  max: (max: number) => (value: string): ValidationResult => {
+  max: (max: number) => (value: unknown): ValidationResult => {
     const num = Number(value);
     if (isNaN(num)) {
       return { ok: false, error: { key: 'validations.number' } };
@@ -81,11 +84,21 @@ export const validators = {
       return { ok: false, error: { key: 'validations.url' } };
     }
   },
+
+  minArrayLength: (min: number) => (value: unknown): ValidationResult => {
+      if (!Array.isArray(value)) {
+          return { ok: false, error: { key: 'validations.array' } };
+      }
+      if (value.length < min) {
+          return { ok: false, error: { key: 'validations.minArray', params: { min } } };
+      }
+      return { ok: true };
+  }
 };
 
 // Compose multiple validators
-export function composeValidators(...validators: ((value: string) => ValidationResult)[]): (value: string) => ValidationResult {
-  return (value: string) => {
+export function composeValidators(...validators: ((value: unknown) => ValidationResult)[]): (value: unknown) => ValidationResult {
+  return (value: unknown) => {
     for (const validator of validators) {
       const result = validator(value);
       if (!result.ok) {
@@ -96,7 +109,30 @@ export function composeValidators(...validators: ((value: string) => ValidationR
   };
 }
 
-// InventoryItem specific validators
+// Helpers
+export interface ValidationError {
+  key: string;
+  params?: Record<string, string | number>;
+}
+
+export function validateSchema<T>(data: T, schema: Partial<Record<keyof T, (value: unknown) => ValidationResult>>): Record<string, ValidationError> {
+    const errors: Record<string, ValidationError> = {};
+
+    for (const key in schema) {
+        const validator = schema[key];
+        if (validator) {
+            const result = validator(data[key]);
+            if (!result.ok) {
+                errors[key as string] = result.error;
+            }
+        }
+    }
+
+    return errors;
+}
+
+// Entity Validators
+
 export const inventoryValidators = {
   name: composeValidators(
     validators.required,
@@ -104,24 +140,53 @@ export const inventoryValidators = {
     validators.maxLength(100)
   ),
 
-  quantity: (value: string): ValidationResult => {
-    const num = parseInt(value, 10);
-    if (isNaN(num)) {
-      return { ok: false, error: { key: 'validations.number' } };
-    }
-    if (num < 1) {
-      return { ok: false, error: { key: 'validations.min', params: { min: 1 } } };
-    }
-    if (num > 9999) {
-      return { ok: false, error: { key: 'validations.max', params: { max: 9999 } } };
-    }
-    return { ok: true };
-  },
+  quantity: composeValidators(
+    validators.integer,
+    validators.min(1),
+    validators.max(9999)
+  ),
 
-  icon: (value: string): ValidationResult => {
-    if (value && value.length > 50) {
-      return { ok: false, error: { key: 'validations.iconTooLong' } };
+  icon: validators.maxLength(50),
+};
+
+export const tagValidators = {
+    name: composeValidators(
+        validators.required,
+        validators.minLength(1),
+        validators.maxLength(30)
+    ),
+    color: validators.required
+};
+
+export const exerciseValidators = {
+    title: composeValidators(
+        validators.required,
+        validators.minLength(1),
+        validators.maxLength(100)
+    ),
+    tagIds: composeValidators(
+        validators.required,
+        validators.minArrayLength(1)
+    )
+};
+
+export const routineValidators = {
+    name: composeValidators(
+        validators.required,
+        validators.minLength(1),
+        validators.maxLength(100)
+    ),
+    series: (value: unknown): ValidationResult => {
+        if (!Array.isArray(value)) return { ok: false, error: { key: 'validations.array' } };
+        if (value.length === 0) return { ok: false, error: { key: 'validations.minArray', params: { min: 1 } } };
+
+        // Deep check: every series must have exercises
+        for (const s of value) {
+            if (!s.exercises || s.exercises.length === 0) {
+                 return { ok: false, error: { key: 'validations.emptySeries' } };
+            }
+        }
+
+        return { ok: true };
     }
-    return { ok: true };
-  },
 };

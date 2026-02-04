@@ -6,6 +6,11 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import type { ValidationResult } from '@/lib/validations';
 import { IconPicker } from '@/components/ui/IconPicker';
+import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { MediaUploadInput } from '@/components/ui/MediaUploadInput';
+import type { TextareaHTMLAttributes } from 'react';
+import type { MediaItem } from '@/types';
 
 export type FormFieldValues = Record<string, unknown>;
 export type FormErrors = Record<string, string | undefined>;
@@ -40,6 +45,7 @@ interface FormProps {
 }
 
 export function Form({ children, onSubmit, className, defaultValues, submitLabel }: FormProps) {
+  const { t } = useTranslation();
   const [values, setValues] = useState<FormFieldValues>(defaultValues || {});
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,12 +69,7 @@ export function Form({ children, onSubmit, className, defaultValues, submitLabel
   }, []);
 
   const unregisterField = useCallback((name: string) => {
-    setValues(prev => {
-      const next = { ...prev };
-      delete next[name];
-      return next;
-    });
-
+    // We do not delete the value to preserve state if the field remounts
     setErrors(prev => {
       const next = { ...prev };
       delete next[name];
@@ -90,6 +91,20 @@ export function Form({ children, onSubmit, className, defaultValues, submitLabel
     setIsSubmitting(true);
     try {
       await onSubmit(values);
+    } catch (err) {
+      if (typeof err === 'object' && err !== null) {
+        Object.entries(err).forEach(([key, value]) => {
+            // Handle { key: string, params?: object } error structure
+            if (typeof value === 'object' && value !== null && 'key' in value) {
+                const errorObj = value as { key: string; params?: Record<string, string | number> };
+                setFieldError(key, t(errorObj.key, errorObj.params));
+            } else if (typeof value === 'string') {
+                // Fallback for simple string errors
+                setFieldError(key, t(value));
+            }
+        });
+      }
+      console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -182,6 +197,60 @@ function FormInput({ name, validator, defaultValue, ...props }: FormInputProps) 
   );
 }
 
+// --- Form.Textarea ---
+interface FormTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  name: string;
+  label?: string;
+  validator?: (value: string) => ValidationResult;
+}
+
+function FormTextarea({ name, validator, label, className, defaultValue, ...props }: FormTextareaProps) {
+  return (
+    <FormField
+      name={name}
+      defaultValue={defaultValue}
+      validator={validator ? (v) => validator(String(v)) : undefined}
+    >
+      {({ onChange, setValue, error, value }) => (
+        <div className="w-full">
+          {label && (
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 ml-1">
+              {label}
+            </label>
+          )}
+          <div className={cn(
+            "group relative flex w-full rounded-2xl bg-surface-light dark:bg-surface-dark border transition-all duration-200 shadow-sm overflow-hidden",
+            error
+              ? "border-red-400 dark:border-red-500 focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500"
+              : "border-gray-200 dark:border-surface-highlight focus-within:border-primary focus-within:ring-1 focus-within:ring-primary",
+            className
+          )}>
+            <textarea
+              className="flex-1 w-full bg-transparent border-none p-4 text-base font-normal text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 min-h-[100px] resize-none"
+              {...props}
+              value={String(value || '')}
+              onChange={(e) => {
+                onChange(e);
+                setValue(e.target.value);
+              }}
+            />
+            {error && (
+              <div className="absolute top-4 right-3 flex items-center justify-center text-red-400 dark:text-red-500 pointer-events-none">
+                <Icon name="error" size={20} />
+              </div>
+            )}
+          </div>
+          {error && (
+            <p className="text-xs text-red-500 dark:text-red-400 mt-1 ml-1">
+              {error}
+            </p>
+          )}
+        </div>
+      )}
+    </FormField>
+  );
+}
+
 // --- Form.Select ---
 interface FormSelectProps extends Omit<ComponentProps<typeof Select>, 'value' | 'onChange' | 'error'> {
   name: string;
@@ -235,7 +304,35 @@ function FormIconPicker({ name, validator, defaultValue, ...props }: FormIconPic
   );
 }
 
+// --- Form.Media ---
+interface FormMediaProps {
+  name: string;
+  defaultValue?: MediaItem[];
+  className?: string;
+  validator?: (value: MediaItem[]) => ValidationResult;
+}
+
+function FormMedia({ name, defaultValue, validator, className }: FormMediaProps) {
+  return (
+    <FormField
+      name={name}
+      defaultValue={defaultValue}
+      validator={validator ? (v) => validator(v as MediaItem[]) : undefined}
+    >
+      {({ setValue, value }) => (
+        <MediaUploadInput
+          value={value as MediaItem[]}
+          onChange={setValue}
+          className={className}
+        />
+      )}
+    </FormField>
+  );
+}
+
 Form.Field = FormField;
 Form.Input = FormInput;
 Form.Select = FormSelect;
 Form.IconPicker = FormIconPicker;
+Form.Textarea = FormTextarea;
+Form.Media = FormMedia;

@@ -56,7 +56,13 @@
     "max": "Debe ser como máximo {{max}}",
     "email": "Debe ser una dirección de correo electrónico válida",
     "url": "Debe ser una URL válida",
-    "iconTooLong": "El nombre del icono es demasiado largo"
+    "iconTooLong": "El nombre del icono es demasiado largo",
+    "array": "Debe ser una lista",
+    "minArray": "Debe tener al menos {{min}} elementos",
+    "emptySeries": "La serie debe contener al menos un ejercicio",
+    "uniqueName": "El nombre debe ser único",
+    "mediaType": "Solo se soportan imágenes y videos.",
+    "invalidYoutubeUrl": "URL de YouTube inválida"
   },
   "routineBuilder": {
     "newRoutine": "Nueva Rutina",
@@ -118,5 +124,9 @@
   "workInProgress": {
     "title": "En Construcción",
     "description": "Esta función está actualmente en desarrollo. ¡Vuelve pronto para ver actualizaciones!"
+  },
+  "exercise": {
+    "enterYoutubeUrl": "Introduce la URL de YouTube:",
+    "media": "Galería Multimedia"
   }
 }
