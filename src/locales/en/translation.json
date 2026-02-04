@@ -1,6 +1,8 @@
 {
   "common": {
     "confirm": "Confirm",
+    "create": "Create",
+    "loading": "Loading...",
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
@@ -122,7 +124,18 @@
     "searchPlaceholder": "Search tags..."
   },
   "settings": {
-    "manageTags": "Manage Tags"
+    "title": "Settings",
+    "general": "General",
+    "language": "Language",
+    "manageTags": "Manage Tags",
+    "appearance": "Appearance",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "systemDefault": "System Default",
+    "selectLanguage": "Select Language",
+    "cancel": "Cancel",
+    "version": "Lavender Focus v1.0.4",
+    "localData": "Local Data Storage Active"
   },
   "iconPicker": {
     "title": "Select Icon",

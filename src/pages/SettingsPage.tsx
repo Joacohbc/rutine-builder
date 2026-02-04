@@ -6,12 +6,11 @@ import { Icon } from '@/components/ui/Icon';
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/useTheme';
-import { t } from 'i18next';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   // Get current language code (first two letters)
@@ -39,7 +38,7 @@ export default function SettingsPage() {
           >
             <Icon name="arrow_back" size={24} />
           </button>
-          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Settings</h2>
+          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">{t('settings.title', 'Settings')}</h2>
         </div>
       }
     >
@@ -47,7 +46,7 @@ export default function SettingsPage() {
         {/* Section: General */}
         <section>
           {/* SectionHeader */}
-          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3 pt-2">General</h3>
+          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3 pt-2">{t('settings.general', 'General')}</h3>
           {/* Grouped List Items Background */}
           <div className="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
             {/* ListItem: Language */}
@@ -60,7 +59,7 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
                     <Icon name="language" size={18} />
                   </div>
-                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">Language</p>
+                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">{t('settings.language', 'Language')}</p>
                 </div>
                 <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   <p className="text-sm font-normal leading-normal">{currentLanguage}</p>
@@ -94,7 +93,7 @@ export default function SettingsPage() {
         {/* Section: Appearance */}
         <section>
           {/* SectionHeader */}
-          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3">Appearance</h3>
+          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3">{t('settings.appearance', 'Appearance')}</h3>
           {/* RadioList Container */}
           <div className="flex flex-col gap-3" style={{'--radio-dot-svg': "url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3ccircle cx=%278%27 cy=%278%27 r=%273%27/%3e%3c/svg%3e')" } as React.CSSProperties}>
             {/* Radio Option 1: Light Mode */}
@@ -109,7 +108,7 @@ export default function SettingsPage() {
               <div className="flex grow items-center gap-3">
                 <Icon name="light_mode" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
                 <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">Light Mode</p>
+                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">{t('settings.lightMode', 'Light Mode')}</p>
                 </div>
               </div>
             </label>
@@ -125,7 +124,7 @@ export default function SettingsPage() {
               <div className="flex grow items-center gap-3">
                 <Icon name="dark_mode" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
                 <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">Dark Mode</p>
+                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">{t('settings.darkMode', 'Dark Mode')}</p>
                 </div>
               </div>
             </label>
@@ -141,7 +140,7 @@ export default function SettingsPage() {
               <div className="flex grow items-center gap-3">
                 <Icon name="settings_brightness" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
                 <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">System Default</p>
+                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">{t('settings.systemDefault', 'System Default')}</p>
                 </div>
               </div>
             </label>
@@ -153,8 +152,8 @@ export default function SettingsPage() {
           <div className="size-10 rounded-xl bg-primary mb-3 flex items-center justify-center shadow-lg shadow-primary/40">
             <Icon name="inventory_2" className="text-white" />
           </div>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Lavender Focus v1.0.4</p>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Local Data Storage Active</p>
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('settings.version', 'Lavender Focus v1.0.4')}</p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{t('settings.localData', 'Local Data Storage Active')}</p>
         </div>
       </div>
 
@@ -164,7 +163,7 @@ export default function SettingsPage() {
         variant="bottom-sheet"
       >
         <div className="flex flex-col p-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Select Language</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{t('settings.selectLanguage', 'Select Language')}</h3>
           <div className="flex flex-col gap-2">
             {languages.map((lang) => (
               <button
@@ -188,7 +187,7 @@ export default function SettingsPage() {
             onClick={() => setShowLanguageModal(false)}
             className="mt-4 w-full py-4 text-center text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            Cancel
+            {t('settings.cancel', 'Cancel')}
           </button>
         </div>
       </Modal>
