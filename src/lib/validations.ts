@@ -97,8 +97,8 @@ export const validators = {
 };
 
 // Compose multiple validators
-export function composeValidators(...validators: ((value: any) => ValidationResult)[]): (value: any) => ValidationResult {
-  return (value: any) => {
+export function composeValidators(...validators: ((value: unknown) => ValidationResult)[]): (value: unknown) => ValidationResult {
+  return (value: unknown) => {
     for (const validator of validators) {
       const result = validator(value);
       if (!result.ok) {
@@ -115,7 +115,7 @@ export interface ValidationError {
   params?: Record<string, string | number>;
 }
 
-export function validateSchema<T>(data: T, schema: Partial<Record<keyof T, (value: any) => ValidationResult>>): Record<string, ValidationError> {
+export function validateSchema<T>(data: T, schema: Partial<Record<keyof T, (value: unknown) => ValidationResult>>): Record<string, ValidationError> {
     const errors: Record<string, ValidationError> = {};
 
     for (const key in schema) {

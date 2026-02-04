@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRoutines } from '@/hooks/useRoutines';
@@ -51,32 +51,36 @@ export default function RoutineBuilderPage() {
   const { routines, addRoutine, updateRoutine, loading: routinesLoading } = useRoutines();
   const { exercises } = useExercises(); // To lookup names
 
-  const [initialValues, setInitialValues] = useState<Partial<Routine> | null>(null);
   const [showSelector, setShowSelector] = useState<{ seriesId: string } | null>(null);
 
-  // Initialize form values
-  useEffect(() => {
+  const initialValues = useMemo(() => {
     if (id) {
         if (!routinesLoading && routines.length > 0) {
-            const r = routines.find(r => r.id === Number(id));
-            if (r) {
-                setInitialValues(r);
-            } else {
-                navigate('/builder'); // Not found
-            }
+            return routines.find(r => r.id === Number(id)) ?? null;
         }
-    } else {
-        // New routine default
-        setInitialValues({
-            name: t('routineBuilder.newRoutine'),
-            series: [{
-                 id: crypto.randomUUID(),
-                 type: 'standard',
-                 exercises: []
-            }]
-        });
+        return null;
     }
-  }, [id, routines, routinesLoading, navigate, t]);
+    
+    // New routine default
+    return {
+        name: t('routineBuilder.newRoutine'),
+        series: [{
+                id: crypto.randomUUID(),
+                type: 'standard',
+                exercises: []
+        }]
+    };
+  }, [id, routines, routinesLoading, t]);
+
+  // Handle not found routine
+  useEffect(() => {
+    if (id && !routinesLoading && routines.length > 0) {
+        const r = routines.find(r => r.id === Number(id));
+        if (!r) {
+            navigate('/builder');
+        }
+    }
+  }, [id, routines, routinesLoading, navigate]);
 
   const handleSave = async (values: Record<string, unknown>) => {
     const routineData: Routine = {
@@ -141,7 +145,7 @@ export default function RoutineBuilderPage() {
                                 <input
                                     value={String(value || '')}
                                     onChange={e => setValue(e.target.value)}
-                                    className="bg-transparent text-center font-bold text-lg focus:outline-none focus:ring-1 focus:ring-primary rounded px-2 w-full max-w-[200px]"
+                                    className="bg-transparent text-center font-bold text-lg focus:outline-none focus:ring-1 focus:ring-primary rounded px-2 w-full max-w-50"
                                     placeholder={t('routineBuilder.routineName', 'Routine Name')}
                                 />
                                 {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -261,8 +265,8 @@ export default function RoutineBuilderPage() {
                                 <div key={s.id} className="relative">
                                     {/* Superset Connector Line */}
                                     {s.type === 'superset' && (
-                                        <div className="absolute left-0 top-4 bottom-4 w-1 bg-gradient-to-b from-primary via-primary to-primary/50 rounded-full">
-                                            <div className="absolute -left-[18px] top-1/2 -translate-y-1/2 -rotate-90 origin-center">
+                                        <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-primary via-primary to-primary/50 rounded-full">
+                                            <div className="absolute -left-4.5 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
                                                 <span className="text-[9px] uppercase font-bold text-primary tracking-widest bg-background-light dark:bg-background-dark px-1">{t('routineBuilder.superset')}</span>
                                             </div>
                                         </div>
