@@ -21,7 +21,6 @@ const PRESET_COLORS = [
 ];
 
 export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {
-  const { t } = useTranslation();
   const { tags, addTag } = useTags();
   const { items: inventoryItems } = useInventory();
   const { exercises } = useExercises();
@@ -52,7 +51,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
       tag.name.toLowerCase().includes(search.toLowerCase()) &&
       !selectedTagIds.includes(tag.id!)
     );
-  }, [search, tags, selectedTagIds, t]);
+  }, [search, tags, selectedTagIds ]);
 
   const handleAddTag = async () => {
     if (!search.trim()) return;
