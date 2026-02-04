@@ -7,7 +7,6 @@ import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { TagItem } from '@/components/ui/TagItem';
-import { cn } from '@/lib/utils';
 
 interface TagSelectorProps {
   selectedTagIds: number[];
