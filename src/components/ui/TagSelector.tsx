@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useTags } from '@/hooks/useTags';
 import { useInventory } from '@/hooks/useInventory';
 import { useExercises } from '@/hooks/useExercises';

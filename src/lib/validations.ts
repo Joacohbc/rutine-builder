@@ -4,28 +4,30 @@ export type ValidationResult =
 
 // Generic validators
 export const validators = {
-  required: (value: string): ValidationResult => {
-    if (!value || value.trim() === '') {
+  required: (value: unknown): ValidationResult => {
+    if (value === null || value === undefined || String(value).trim() === '') {
       return { ok: false, error: { key: 'validations.required' } };
     }
     return { ok: true };
   },
 
-  minLength: (min: number) => (value: string): ValidationResult => {
-    if (value.length < min) {
+  minLength: (min: number) => (value: unknown): ValidationResult => {
+    const strVal = String(value || '');
+    if (strVal.length < min) {
       return { ok: false, error: { key: 'validations.minLength', params: { min } } };
     }
     return { ok: true };
   },
 
-  maxLength: (max: number) => (value: string): ValidationResult => {
-    if (value.length > max) {
+  maxLength: (max: number) => (value: unknown): ValidationResult => {
+    const strVal = String(value || '');
+    if (strVal.length > max) {
       return { ok: false, error: { key: 'validations.maxLength', params: { max } } };
     }
     return { ok: true };
   },
 
-  number: (value: string): ValidationResult => {
+  number: (value: unknown): ValidationResult => {
     const num = Number(value);
     if (isNaN(num)) {
       return { ok: false, error: { key: 'validations.number' } };
@@ -33,15 +35,15 @@ export const validators = {
     return { ok: true };
   },
 
-  integer: (value: string): ValidationResult => {
-    const num = parseInt(value, 10);
+  integer: (value: unknown): ValidationResult => {
+    const num = parseInt(String(value), 10);
     if (isNaN(num) || !Number.isInteger(num)) {
       return { ok: false, error: { key: 'validations.integer' } };
     }
     return { ok: true };
   },
 
-  min: (min: number) => (value: string): ValidationResult => {
+  min: (min: number) => (value: unknown): ValidationResult => {
     const num = Number(value);
     if (isNaN(num)) {
       return { ok: false, error: { key: 'validations.number' } };

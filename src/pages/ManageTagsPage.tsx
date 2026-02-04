@@ -1,33 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTags } from '@/hooks/useTags';
+import { useTags, TAG_COLORS } from '@/hooks/useTags';
 import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
-import { Form } from '@/components/ui/Form';
+import { Form, type FormFieldValues } from '@/components/ui/Form';
 import { validators } from '@/lib/validations';
 import type { Tag } from '@/types';
-
-const COLORS = [
-  '#ef4444', // red-500
-  '#f97316', // orange-500
-  '#f59e0b', // amber-500
-  '#84cc16', // lime-500
-  '#22c55e', // green-500
-  '#10b981', // emerald-500
-  '#06b6d4', // cyan-500
-  '#0ea5e9', // sky-500
-  '#3b82f6', // blue-500
-  '#6366f1', // indigo-500
-  '#8b5cf6', // violet-500
-  '#d946ef', // fuchsia-500
-  '#ec4899', // pink-500
-  '#64748b', // slate-500
-];
 
 export default function ManageTagsPage() {
   const { t } = useTranslation();
@@ -52,10 +35,10 @@ export default function ManageTagsPage() {
     setEditingTag(null);
   };
 
-  const handleSubmit = async (data: Record<string, any>) => {
+  const handleSubmit = async (data: FormFieldValues) => {
     const tagData = {
-      name: data.name,
-      color: data.color || COLORS[0],
+      name: data.name as string,
+      color: (data.color as string) || TAG_COLORS[0],
     };
 
     if (editingTag) {
@@ -149,7 +132,7 @@ export default function ManageTagsPage() {
             onSubmit={handleSubmit}
             defaultValues={{
               name: editingTag?.name || '',
-              color: editingTag?.color || COLORS[0],
+              color: editingTag?.color || TAG_COLORS[0],
             }}
             submitLabel={editingTag ? t('common.save', 'Save') : t('common.create', 'Create')}
           >
@@ -178,7 +161,7 @@ export default function ManageTagsPage() {
                     {t('tags.color', 'Color')}
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    {COLORS.map((color) => (
+                    {TAG_COLORS.map((color) => (
                       <button
                         key={color}
                         type="button"
@@ -212,8 +195,8 @@ export default function ManageTagsPage() {
         onConfirm={handleDelete}
         title={t('tags.deleteTitle', 'Delete Tag')}
         description={t('tags.deleteDescription', 'Are you sure you want to delete this tag? It will be removed from all exercises and inventory items.')}
-        confirmLabel={t('common.delete', 'Delete')}
-        cancelLabel={t('common.cancel', 'Cancel')}
+        confirmText={t('common.delete', 'Delete')}
+        cancelText={t('common.cancel', 'Cancel')}
         variant="danger"
       />
     </Layout>

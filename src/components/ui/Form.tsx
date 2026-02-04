@@ -3,11 +3,12 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
 import type { ValidationResult } from '@/lib/validations';
 import { IconPicker } from '@/components/ui/IconPicker';
 
-type FormFieldValues = Record<string, unknown>;
-type FormErrors = Record<string, string | undefined>;
+export type FormFieldValues = Record<string, unknown>;
+export type FormErrors = Record<string, string | undefined>;
 
 type FormContextType = {
   values: FormFieldValues;
@@ -34,10 +35,12 @@ interface FormProps {
   children: ReactNode;
   onSubmit: (values: FormFieldValues) => Promise<void> | void;
   className?: string;
+  defaultValues?: FormFieldValues;
+  submitLabel?: string;
 }
 
-export function Form({ children, onSubmit, className }: FormProps) {
-  const [values, setValues] = useState<FormFieldValues>({});
+export function Form({ children, onSubmit, className, defaultValues, submitLabel }: FormProps) {
+  const [values, setValues] = useState<FormFieldValues>(defaultValues || {});
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -96,6 +99,13 @@ export function Form({ children, onSubmit, className }: FormProps) {
     <FormContext.Provider value={{ values, errors, setFieldValue, setFieldError, registerField, unregisterField, isSubmitting }}>
       <form onSubmit={handleSubmit} className={className}>
         {children}
+        {submitLabel && (
+          <div className="mt-6 flex justify-end">
+            <Button type="submit" disabled={isSubmitting}>
+              {submitLabel}
+            </Button>
+          </div>
+        )}
       </form>
     </FormContext.Provider>
   );
