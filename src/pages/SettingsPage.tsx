@@ -1,19 +1,16 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Layout } from '@/components/ui/Layout';
 import { Icon } from '@/components/ui/Icon';
-import { Modal } from '@/components/ui/Modal';
-import { cn } from '@/lib/utils';
 import { useTheme, type Theme } from '@/hooks/useTheme';
 import { Form } from '@/components/ui/Form';
+import { ListItemSelect } from '@/components/ui/ListItemSelect';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
-
+  
   // Get current language code (first two letters)
   const currentLangCode = i18n.language.split('-')[0];
   const currentLanguage = currentLangCode === 'es' ? 'Español' : 'English';
@@ -26,7 +23,6 @@ export default function SettingsPage() {
   const handleLanguageChange = async (langCode: string) => {
     await i18n.changeLanguage(langCode);
     localStorage.setItem('i18nextLng', langCode);
-    setShowLanguageModal(false);
   };
 
   return (
@@ -51,43 +47,15 @@ export default function SettingsPage() {
           {/* Grouped List Items Background */}
           <div className="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
             {/* ListItem: Language */}
-            <div className="relative flex flex-col w-full">
-              <button
-                onClick={() => setShowLanguageModal(true)}
-                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
-                    <Icon name="language" size={18} />
-                  </div>
-                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">{t('settings.language', 'Language')}</p>
-                </div>
-                <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <p className="text-sm font-normal leading-normal">{currentLanguage}</p>
-                  <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </button>
-            </div>
-            
-            {/* ListItem: Manage Tags */}
-            <div className="relative flex flex-col w-full border-t border-slate-200 dark:border-slate-800">
-               <button
-                onClick={() => navigate('/settings/tags')}
-                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
-                    <Icon name="label" size={18} />
-                  </div>
-                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">
-                    {t('settings.manageTags', 'Manage Tags')}
-                  </p>
-                </div>
-                <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </button>
-            </div>
+            <ListItemSelect
+              icon="language"
+              label={t('settings.language', 'Language')}
+              valueLabel={currentLanguage}
+              value={currentLangCode}
+              options={languages}
+              onSelect={handleLanguageChange}
+              title={t('settings.selectLanguage', 'Select Language')}
+            />
           </div>
         </section>
 
@@ -126,41 +94,6 @@ export default function SettingsPage() {
           <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{t('settings.localData', 'Local Data Storage Active')}</p>
         </div>
       </div>
-
-      <Modal
-        isOpen={showLanguageModal}
-        onClose={() => setShowLanguageModal(false)}
-        variant="bottom-sheet"
-      >
-        <div className="flex flex-col p-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{t('settings.selectLanguage', 'Select Language')}</h3>
-          <div className="flex flex-col gap-2">
-            {languages.map((lang) => (
-              <button
-                key={lang.value}
-                onClick={() => handleLanguageChange(lang.value)}
-                className={cn(
-                  "flex items-center justify-between p-4 rounded-xl transition-all",
-                  currentLangCode === lang.value
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
-                )}
-              >
-                <span className="font-medium">{lang.label}</span>
-                {currentLangCode === lang.value && (
-                  <Icon name="check" size={20} />
-                )}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setShowLanguageModal(false)}
-            className="mt-4 w-full py-4 text-center text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
-          >
-            {t('settings.cancel', 'Cancel')}
-          </button>
-        </div>
-      </Modal>
     </Layout>
   );
 }
