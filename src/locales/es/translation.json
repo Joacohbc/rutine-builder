@@ -4,7 +4,11 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando...",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "addItem": "Añadir Item",
+    "inventory": "Inventario",
+    "upload": "Subir",
+    "search": "Buscar..."
   },
   "nav": {
     "cellar": "Bodega",
@@ -100,7 +104,8 @@
       "available": "Disponible",
       "checked_out": "Prestado",
       "maintenance": "Mantenimiento"
-    }
+    },
+    "manage": "Gestionar Inventario"
   },
   "tags": {
     "title": "Gestionar Etiquetas",
@@ -112,10 +117,17 @@
     "name": "Nombre",
     "namePlaceholder": "ej., Empuje, Pesado",
     "color": "Color",
-    "noTags": "No se encontraron etiquetas. Crea una para empezar."
+    "noTags": "No se encontraron etiquetas. Crea una para empezar.",
+    "addPlaceholder": "Añadir etiqueta personalizada...",
+    "searchPlaceholder": "Buscar etiquetas..."
   },
   "settings": {
     "manageTags": "Gestionar Etiquetas"
+  },
+  "iconPicker": {
+    "title": "Seleccionar Icono",
+    "searchPlaceholder": "Buscar iconos...",
+    "selectPlaceholder": "Seleccionar un icono..."
   },
   "mobileWarning": {
     "title": "Solo para Teléfonos",
@@ -127,6 +139,14 @@
   },
   "exercise": {
     "enterYoutubeUrl": "Introduce la URL de YouTube:",
-    "media": "Galería Multimedia"
+    "media": "Galería Multimedia",
+    "edit": "Editar Ejercicio",
+    "new": "Nuevo Ejercicio",
+    "title": "Título del Ejercicio",
+    "titlePlaceholder": "ej. Press Inclinado",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Añade indicaciones, consejos de forma o instrucciones...",
+    "equipment": "Equipo Requerido",
+    "tags": "Músculos y Etiquetas"
   }
 }

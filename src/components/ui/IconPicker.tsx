@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/ui/Modal';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
@@ -19,9 +20,11 @@ export function IconPicker({
   onChange,
   error,
   className,
-  placeholder = "Select an icon...",
+  placeholder,
   label
 }: IconPickerProps) {
+  const { t } = useTranslation();
+  const displayPlaceholder = placeholder || t('iconPicker.selectPlaceholder', 'Select an icon...');
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'common' | 'all'>('common');
@@ -82,7 +85,7 @@ export function IconPicker({
                 <Icon name="add_reaction" className="text-gray-400" size={20} />
               </div>
               <span className="flex-1 text-gray-500 dark:text-gray-400">
-                {placeholder}
+                {displayPlaceholder}
               </span>
               <Icon name="expand_more" className="text-gray-400" />
             </>
@@ -100,7 +103,7 @@ export function IconPicker({
         {/* Header */}
         <div className="p-4 border-b border-gray-100 dark:border-surface-highlight space-y-4 bg-surface-light dark:bg-surface-dark z-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold">Select Icon</h3>
+            <h3 className="text-lg font-bold">{t('iconPicker.title', 'Select Icon')}</h3>
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-surface-highlight rounded-full"
@@ -111,7 +114,7 @@ export function IconPicker({
 
           <Input
             icon="search"
-            placeholder="Search icons..."
+            placeholder={t('iconPicker.searchPlaceholder', 'Search icons...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full"

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTags } from '@/hooks/useTags';
 import { useInventory } from '@/hooks/useInventory';
 import { useExercises } from '@/hooks/useExercises';
@@ -19,8 +20,7 @@ const PRESET_COLORS = [
   '#6366f1', '#ec4899', '#8b5cf6', '#06b6d4'
 ];
 
-export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {
-  const { tags, addTag } = useTags();
+export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {  const { t } = useTranslation();  const { tags, addTag } = useTags();
   const { items: inventoryItems } = useInventory();
   const { exercises } = useExercises();
   const [search, setSearch] = useState('');
@@ -137,7 +137,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
             <Input
               defaultValue={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Add custom tag..."
+              placeholder={t('tags.addPlaceholder', 'Add custom tag...')}
               className="pl-10 pr-10 border-none bg-transparent focus:ring-0 h-8"
               onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
             />
@@ -192,7 +192,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
                 autoFocus
                 value={modalSearch}
                 onChange={e => setModalSearch(e.target.value)}
-                placeholder="Search tags..."
+                placeholder={t('tags.searchPlaceholder', 'Search tags...')}
                 className="w-full bg-gray-100 dark:bg-surface-highlight rounded-xl py-3 pl-10 pr-4 outline-none border border-transparent focus:border-primary transition-all"
              />
           </div>

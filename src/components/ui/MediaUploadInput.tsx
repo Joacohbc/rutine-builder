@@ -74,7 +74,7 @@ export function MediaUploadInput({ value = [], onChange, className }: MediaUploa
 			<div className="flex items-center justify-between mb-2">
 				<label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('exercise.media', 'Multimedia Gallery')}</label>
 				<button type="button" onClick={() => fileInputRef.current?.click()} className="text-primary text-xs font-bold flex items-center gap-1 hover:text-primary-dark transition-colors">
-					<Icon name="add_circle" size={16} /> {t('common.add', 'Add Media')}
+					<Icon name="add_circle" size={16} /> {t('common.addItem')}
 				</button>
 			</div>
 

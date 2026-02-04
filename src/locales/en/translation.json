@@ -4,7 +4,11 @@
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
-    "delete": "Delete"
+    "delete": "Delete",
+    "addItem": "Add Item",
+    "inventory": "Inventory",
+    "upload": "Upload",
+    "search": "Search..."
   },
   "nav": {
     "cellar": "Cellar",
@@ -100,7 +104,8 @@
       "available": "Available",
       "checked_out": "Checked Out",
       "maintenance": "Maintenance"
-    }
+    },
+    "manage": "Manage Inventory"
   },
   "tags": {
     "title": "Manage Tags",
@@ -112,10 +117,17 @@
     "name": "Name",
     "namePlaceholder": "e.g., Pull, Heavy",
     "color": "Color",
-    "noTags": "No tags found. Create one to get started."
+    "noTags": "No tags found. Create one to get started.",
+    "addPlaceholder": "Add custom tag...",
+    "searchPlaceholder": "Search tags..."
   },
   "settings": {
     "manageTags": "Manage Tags"
+  },
+  "iconPicker": {
+    "title": "Select Icon",
+    "searchPlaceholder": "Search icons...",
+    "selectPlaceholder": "Select an icon..."
   },
   "mobileWarning": {
     "title": "Mobile Only",
@@ -127,6 +139,14 @@
   },
   "exercise": {
     "enterYoutubeUrl": "Enter YouTube URL:",
-    "media": "Multimedia Gallery"
+    "media": "Multimedia Gallery",
+    "edit": "Edit Exercise",
+    "new": "New Exercise",
+    "title": "Exercise Title",
+    "titlePlaceholder": "e.g. Incline Bench Press",
+    "description": "Description",
+    "descriptionPlaceholder": "Add cues, form tips, or setup instructions...",
+    "equipment": "Required Equipment",
+    "tags": "Muscle & Tags"
   }
 }
