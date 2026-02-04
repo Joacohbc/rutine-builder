@@ -7,7 +7,7 @@ import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { TagSelector } from '@/components/ui/TagSelector';
-import { Form } from '@/components/ui/Form';
+import { Form, type FormFieldValues } from '@/components/ui/Form';
 import { exerciseValidators } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 import type { MediaItem, Exercise } from '@/types';
@@ -45,7 +45,7 @@ export default function ExerciseFormPage() {
         }
     }, [id, exercises, exercisesLoading, initialValues, navigate]);
 
-    const handleSave = async (values: Record<string, unknown>) => {
+    const handleSave = async (values: FormFieldValues) => {
         const exerciseData: Exercise = {
             id: id ? Number(id) : undefined,
             title: values.title as string,
@@ -74,7 +74,7 @@ export default function ExerciseFormPage() {
     return (
         <Form
             onSubmit={handleSave}
-            defaultValues={initialValues as Record<string, unknown>}
+            defaultValues={initialValues as FormFieldValues}
             className="h-full"
         >
             <Layout
