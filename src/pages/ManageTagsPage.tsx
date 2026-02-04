@@ -5,6 +5,7 @@ import { useTags, TAG_COLORS } from '@/hooks/useTags';
 import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { TagItem } from '@/components/ui/TagItem';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
@@ -80,34 +81,13 @@ export default function ManageTagsPage() {
 
         <div className="flex flex-col gap-2">
           {tags.map((tag) => (
-            <div 
-              key={tag.id} 
-              className="flex items-center justify-between p-3 bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
-            >
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-4 h-4 rounded-full" 
-                  style={{ backgroundColor: tag.color }} 
-                />
-                <span className="font-medium text-slate-900 dark:text-white">
-                  {tag.name}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => handleOpenForm(tag)}
-                  className="p-2 text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors"
-                >
-                  <Icon name="edit" size={20} />
-                </button>
-                <button
-                  onClick={() => setTagToDelete(tag)}
-                  className="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-500 transition-colors"
-                >
-                  <Icon name="delete" size={20} />
-                </button>
-              </div>
-            </div>
+            <TagItem
+              key={tag.id}
+              tag={tag}
+              showActions
+              onEdit={handleOpenForm}
+              onDelete={setTagToDelete}
+            />
           ))}
           
           {tags.length === 0 && (

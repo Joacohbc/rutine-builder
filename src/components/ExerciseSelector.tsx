@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useExercises } from '@/hooks/useExercises';
 import { Input } from '@/components/ui/Input';
 import { Icon } from '@/components/ui/Icon';
@@ -11,6 +12,7 @@ interface ExerciseSelectorProps {
 }
 
 export function ExerciseSelector({ onSelect, onClose }: ExerciseSelectorProps) {
+  const { t } = useTranslation();
   const { exercises } = useExercises();
   const [search, setSearch] = useState('');
 
@@ -33,7 +35,7 @@ export function ExerciseSelector({ onSelect, onClose }: ExerciseSelectorProps) {
 
       <Input
         icon="search"
-        placeholder="Search..."
+        placeholder={t('common.search', 'Search...')}
         defaultValue={search}
         onChange={e => setSearch(e.target.value)}
         className="mb-4"

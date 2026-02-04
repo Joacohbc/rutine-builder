@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useTags } from '@/hooks/useTags';
 import { useInventory } from '@/hooks/useInventory';
 import { useExercises } from '@/hooks/useExercises';
 import { Icon } from '@/components/ui/Icon';
-import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { cn } from '@/lib/utils';
+import { TagItem } from '@/components/ui/TagItem';
 
 interface TagSelectorProps {
   selectedTagIds: number[];
@@ -14,16 +15,11 @@ interface TagSelectorProps {
   label?: string;
 }
 
-const PRESET_COLORS = [
-  '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
-  '#6366f1', '#ec4899', '#8b5cf6', '#06b6d4'
-];
-
-export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {
-  const { tags, addTag } = useTags();
+export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {  const { t } = useTranslation();  const navigate = useNavigate();
+  const { tags } = useTags();
   const { items: inventoryItems } = useInventory();
   const { exercises } = useExercises();
-  const [search, setSearch] = useState('');
+  const [search ] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalSearch, setModalSearch] = useState('');
 
@@ -44,37 +40,6 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
       .slice(0, 4);
   }, [type, inventoryItems, exercises, tags, selectedTagIds]);
 
-  const filteredTags = useMemo(() => {
-    if (!search) return [];
-    return tags.filter(tag =>
-      tag.name.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedTagIds.includes(tag.id!)
-    );
-  }, [search, tags, selectedTagIds ]);
-
-  const handleAddTag = async () => {
-    if (!search.trim()) return;
-
-    // Check if tag already exists (check both raw name and translated name if needed, but storage is raw)
-    // For simplicity, we check raw name first, but user sees translated.
-    // Ideally we shouldn't create "Pecho" if "Chest" exists and translates to "Pecho".
-    // But since `tags` contains raw names ("Chest"), we can check against translated names.
-
-    const existing = tags.find(tag => tag.name.toLowerCase() === search.toLowerCase());
-
-    if (existing) {
-      if (!selectedTagIds.includes(existing.id!)) {
-        onChange([...selectedTagIds, existing.id!]);
-      }
-    } else {
-      const color = PRESET_COLORS[Math.floor(Math.random() * PRESET_COLORS.length)];
-      // If adding a new tag, we add it as entered.
-      const id = await addTag({ name: search.trim(), color });
-      onChange([...selectedTagIds, id as number]);
-    }
-    setSearch('');
-  };
-
   const toggleTag = (id: number) => {
     if (selectedTagIds.includes(id)) {
       onChange(selectedTagIds.filter(tid => tid !== id));
@@ -94,13 +59,6 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
       <div>
         <div className="flex items-center justify-between mb-2 px-1">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</label>
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="text-gray-400 hover:text-primary transition-colors active:scale-95"
-          >
-            <Icon name="search" size={18} />
-          </button>
         </div>
         <div className="bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight rounded-2xl p-4 space-y-4">
         {/* Selected Tags */}
@@ -129,44 +87,23 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
           ))}
         </div>
 
-        <div className="border-t border-gray-100 dark:border-surface-highlight pt-4">
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Icon name="sell" size={18} className="text-gray-400 group-focus-within:text-primary transition-colors" />
-            </div>
-            <Input
-              defaultValue={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Add custom tag..."
-              className="pl-10 pr-10 border-none bg-transparent focus:ring-0 h-8"
-              onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-            />
-            {search && (
-              <button
+        <div className="border-t border-gray-100 dark:border-surface-highlight pt-4 flex gap-2">
+            <button
                 type="button"
-                onClick={handleAddTag}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary"
-              >
-                <Icon name="add" size={20} />
-              </button>
-            )}
-          </div>
-
-          {/* Search Results Dropdown-like (simplified for now) */}
-          {search && filteredTags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {filteredTags.map(tag => (
-                <button
-                  type="button"
-                  key={tag.id}
-                  onClick={() => toggleTag(tag.id!)}
-                  className="px-3 py-1 rounded-full text-xs bg-surface-highlight border border-gray-700 hover:border-primary transition-colors"
-                >
-                  {tag.name}
-                </button>
-              ))}
-            </div>
-          )}
+                className="flex-1 flex items-center justify-center gap-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
+                onClick={() => navigate('/settings/tags')}
+            >
+                <Icon name="add" size={18} />
+                {t('tags.addNew', 'Add New')}
+            </button>
+            <button
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
+                onClick={() => setIsModalOpen(true)}
+            >
+                <Icon name="list" size={18} />
+                {t('tags.viewAll', 'View All')}
+            </button>
         </div>
       </div>
     </div>
@@ -192,7 +129,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
                 autoFocus
                 value={modalSearch}
                 onChange={e => setModalSearch(e.target.value)}
-                placeholder="Search tags..."
+                placeholder={t('common.search', 'Search...')}
                 className="w-full bg-gray-100 dark:bg-surface-highlight rounded-xl py-3 pl-10 pr-4 outline-none border border-transparent focus:border-primary transition-all"
              />
           </div>
@@ -206,28 +143,13 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
                modalFilteredTags.map(tag => {
                  const isSelected = selectedTagIds.includes(tag.id!);
                  return (
-                   <button
-                     type="button"
-                     key={tag.id}
-                     onClick={() => toggleTag(tag.id!)}
-                     className={cn(
-                       "flex items-center gap-2 px-4 py-3 rounded-xl border transition-all w-full sm:w-auto justify-between sm:justify-start",
-                       isSelected
-                         ? "bg-primary/5 border-primary"
-                         : "bg-surface-light dark:bg-surface-dark border-gray-200 dark:border-surface-highlight"
-                     )}
-                   >
-                      <div className="flex items-center gap-3">
-                         <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: tag.color }}
-                         />
-                         <span className={cn("font-medium", isSelected ? "text-primary" : "text-gray-700 dark:text-gray-300")}>
-                           {tag.name}
-                         </span>
-                      </div>
-                      {isSelected && <Icon name="check" size={18} className="text-primary" />}
-                   </button>
+                    <TagItem
+                      key={tag.id}
+                      tag={tag}
+                      onClick={() => toggleTag(tag.id!)}
+                      selected={isSelected}
+                      className="w-full sm:w-auto"
+                    />
                  );
                })
              )}
@@ -240,7 +162,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
              onClick={() => setIsModalOpen(false)}
              className="w-full bg-primary text-white font-bold py-4 rounded-2xl"
           >
-            Done
+            {t('common.done', 'Done')}
           </button>
         </div>
       </Modal>

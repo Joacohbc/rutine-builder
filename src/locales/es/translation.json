@@ -1,38 +1,42 @@
 {
   "common": {
+    "done": "Listo",
     "confirm": "Confirmar",
+    "create": "Crear",
+    "loading": "Cargando...",
     "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando...",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "addItem": "Añadir Item",
+    "inventory": "Inventario",
+    "upload": "Subir",
+    "search": "Buscar...",
+    "tags": "Etiquetas",
+    "settings": "Ajustes",
+    "exercises": "Ejercicios"
   },
   "nav": {
-    "cellar": "Bodega",
-    "exercises": "Ejercicios",
+    "inventory": "Inventario",
     "builder": "Constructor",
-    "train": "Entrenar",
-    "settings": "Ajustes"
+    "train": "Entrenar"
   },
   "routineList": {
     "title": "Constructor de Rutinas",
-    "loading": "Cargando rutinas...",
     "empty": "No hay rutinas creadas.",
     "emptyHint": "Toca + para crear tu primer plan.",
     "card": {
-      "series": "Series",
-      "exercises": "Ejercicios"
+      "series": "Series"
     }
   },
   "inventoryPage": {
-    "title": "La Bodega",
-    "searchPlaceholder": "Buscar equipo...",
+    "title": "Inventario",
     "filters": {
       "all": "Todos",
       "available": "Disponible",
       "checkedOut": "Prestado"
     },
     "tagsLabel": "Etiquetas:",
-    "loading": "Cargando inventario...",
     "total": "Total: {{count}}",
     "deleteDialog": {
       "title": "Eliminar Item",
@@ -41,8 +45,6 @@
   },
   "exerciseList": {
     "title": "Biblioteca de Ejercicios",
-    "searchPlaceholder": "Buscar ejercicios...",
-    "loading": "Cargando biblioteca...",
     "empty": "No se encontraron ejercicios.",
     "emptyHint": "Toca + para crear uno."
   },
@@ -89,7 +91,6 @@
     "quantity": "Cantidad",
     "condition": "Condición",
     "status": "Estado",
-    "tags": "Etiquetas",
     "conditions": {
       "new": "Nuevo",
       "good": "Bueno",
@@ -100,22 +101,39 @@
       "available": "Disponible",
       "checked_out": "Prestado",
       "maintenance": "Mantenimiento"
-    }
+    },
+    "manage": "Gestionar Inventario"
   },
   "tags": {
     "title": "Gestionar Etiquetas",
     "addNew": "Añadir Nueva Etiqueta",
     "createTag": "Crear Etiqueta",
     "editTag": "Editar Etiqueta",
+    "viewAll": "Ver Todas",
     "deleteTitle": "Eliminar Etiqueta",
     "deleteDescription": "¿Estás seguro de que quieres eliminar esta etiqueta? Se eliminará de todos los ejercicios y elementos del inventario.",
     "name": "Nombre",
     "namePlaceholder": "ej., Empuje, Pesado",
     "color": "Color",
-    "noTags": "No se encontraron etiquetas. Crea una para empezar."
+    "noTags": "No se encontraron etiquetas. Crea una para empezar.",
+    "addPlaceholder": "Añadir etiqueta personalizada..."
   },
   "settings": {
-    "manageTags": "Gestionar Etiquetas"
+    "title": "Ajustes",
+    "general": "General",
+    "language": "Idioma",
+    "manageTags": "Gestionar Etiquetas",
+    "appearance": "Apariencia",
+    "lightMode": "Modo Claro",
+    "darkMode": "Modo Oscuro",
+    "systemDefault": "Sistema",
+    "selectLanguage": "Seleccionar Idioma",
+    "version": "Lavender Focus v1.0.4",
+    "localData": "Almacenamiento Local Activo"
+  },
+  "iconPicker": {
+    "title": "Seleccionar Icono",
+    "selectPlaceholder": "Seleccionar un icono..."
   },
   "mobileWarning": {
     "title": "Solo para Teléfonos",
@@ -127,6 +145,14 @@
   },
   "exercise": {
     "enterYoutubeUrl": "Introduce la URL de YouTube:",
-    "media": "Galería Multimedia"
+    "media": "Galería Multimedia",
+    "edit": "Editar Ejercicio",
+    "new": "Nuevo Ejercicio",
+    "title": "Título del Ejercicio",
+    "titlePlaceholder": "ej. Press Inclinado",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Añade indicaciones, consejos de forma o instrucciones...",
+    "equipment": "Equipo Requerido",
+    "tags": "Músculos y Etiquetas"
   }
 }

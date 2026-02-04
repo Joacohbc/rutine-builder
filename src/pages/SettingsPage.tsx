@@ -1,18 +1,15 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Layout } from '@/components/ui/Layout';
 import { Icon } from '@/components/ui/Icon';
-import { Modal } from '@/components/ui/Modal';
-import { cn } from '@/lib/utils';
-import { useTheme } from '@/hooks/useTheme';
-import { t } from 'i18next';
+import { useTheme, type Theme } from '@/hooks/useTheme';
+import { Form } from '@/components/ui/Form';
+import { ListItemSelect } from '@/components/ui/ListItemSelect';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const { i18n } = useTranslation();
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const { t, i18n } = useTranslation();
 
   // Get current language code (first two letters)
   const currentLangCode = i18n.language.split('-')[0];
@@ -26,7 +23,6 @@ export default function SettingsPage() {
   const handleLanguageChange = async (langCode: string) => {
     await i18n.changeLanguage(langCode);
     localStorage.setItem('i18nextLng', langCode);
-    setShowLanguageModal(false);
   };
 
   return (
@@ -39,7 +35,7 @@ export default function SettingsPage() {
           >
             <Icon name="arrow_back" size={24} />
           </button>
-          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Settings</h2>
+          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">{t('common.settings', 'Settings')}</h2>
         </div>
       }
     >
@@ -47,31 +43,23 @@ export default function SettingsPage() {
         {/* Section: General */}
         <section>
           {/* SectionHeader */}
-          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3 pt-2">General</h3>
+          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3 pt-2">{t('settings.general', 'General')}</h3>
           {/* Grouped List Items Background */}
           <div className="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
             {/* ListItem: Language */}
-            <div className="relative flex flex-col w-full">
-              <button
-                onClick={() => setShowLanguageModal(true)}
-                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
-                    <Icon name="language" size={18} />
-                  </div>
-                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">Language</p>
-                </div>
-                <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <p className="text-sm font-normal leading-normal">{currentLanguage}</p>
-                  <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </button>
-            </div>
-            
+            <ListItemSelect
+              icon="language"
+              label={t('settings.language', 'Language')}
+              valueLabel={currentLanguage}
+              value={currentLangCode}
+              options={languages}
+              onSelect={handleLanguageChange}
+              title={t('settings.selectLanguage', 'Select Language')}
+            />
+          
             {/* ListItem: Manage Tags */}
             <div className="relative flex flex-col w-full border-t border-slate-200 dark:border-slate-800">
-               <button
+              <button
                 onClick={() => navigate('/settings/tags')}
                 className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
               >
@@ -80,7 +68,7 @@ export default function SettingsPage() {
                     <Icon name="label" size={18} />
                   </div>
                   <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">
-                    {t('settings.manageTags', 'Manage Tags')}
+                    {t('tags.title', 'Manage Tags')}
                   </p>
                 </div>
                 <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
@@ -94,58 +82,27 @@ export default function SettingsPage() {
         {/* Section: Appearance */}
         <section>
           {/* SectionHeader */}
-          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3">Appearance</h3>
+          <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3">{t('settings.appearance', 'Appearance')}</h3>
           {/* RadioList Container */}
-          <div className="flex flex-col gap-3" style={{'--radio-dot-svg': "url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3ccircle cx=%278%27 cy=%278%27 r=%273%27/%3e%3c/svg%3e')" } as React.CSSProperties}>
-            {/* Radio Option 1: Light Mode */}
-            <label className="group cursor-pointer flex items-center gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark p-4 flex-row-reverse shadow-sm hover:border-primary/50 transition-all">
-              <input
-                className="peer h-5 w-5 appearance-none rounded-full border-2 border-slate-400 dark:border-slate-600 bg-transparent checked:bg-primary checked:border-primary checked:bg-[image:var(--radio-dot-svg)] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                name="theme_selector"
-                type="radio"
-                checked={theme === 'light'}
-                onChange={() => setTheme('light')}
-              />
-              <div className="flex grow items-center gap-3">
-                <Icon name="light_mode" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
-                <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">Light Mode</p>
-                </div>
-              </div>
-            </label>
-            {/* Radio Option 2: Dark Mode */}
-            <label className="group cursor-pointer flex items-center gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark p-4 flex-row-reverse shadow-sm hover:border-primary/50 transition-all">
-              <input
-                className="peer h-5 w-5 appearance-none rounded-full border-2 border-slate-400 dark:border-slate-600 bg-transparent checked:bg-primary checked:border-primary checked:bg-[image:var(--radio-dot-svg)] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                name="theme_selector"
-                type="radio"
-                checked={theme === 'dark'}
-                onChange={() => setTheme('dark')}
-              />
-              <div className="flex grow items-center gap-3">
-                <Icon name="dark_mode" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
-                <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">Dark Mode</p>
-                </div>
-              </div>
-            </label>
-            {/* Radio Option 3: System Default */}
-            <label className="group cursor-pointer flex items-center gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark p-4 flex-row-reverse shadow-sm hover:border-primary/50 transition-all">
-              <input
-                className="peer h-5 w-5 appearance-none rounded-full border-2 border-slate-400 dark:border-slate-600 bg-transparent checked:bg-primary checked:border-primary checked:bg-[image:var(--radio-dot-svg)] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                name="theme_selector"
-                type="radio"
-                checked={theme === 'system'}
-                onChange={() => setTheme('system')}
-              />
-              <div className="flex grow items-center gap-3">
-                <Icon name="settings_brightness" className="text-slate-500 dark:text-slate-400 peer-checked:text-primary transition-colors" />
-                <div className="flex flex-col">
-                  <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">System Default</p>
-                </div>
-              </div>
-            </label>
-          </div>
+          <Form
+            onSubmit={() => { }}
+            defaultValues={{ theme_selector: theme }}
+          >
+            <Form.RadioButtonGroup
+              name="theme_selector"
+              options={[
+                { label: t('settings.lightMode', 'Light Mode'), value: 'light', icon: 'light_mode' },
+                { label: t('settings.darkMode', 'Dark Mode'), value: 'dark', icon: 'dark_mode' },
+                { label: t('settings.systemDefault', 'System Default'), value: 'system', icon: 'settings_brightness' }
+              ]}
+              validator={(value) => {
+                if (value !== theme) {
+                  setTheme(value as Theme);
+                }
+                return { ok: true };
+              }}
+            />
+          </Form>
         </section>
 
         {/* Footer Info */}
@@ -153,45 +110,10 @@ export default function SettingsPage() {
           <div className="size-10 rounded-xl bg-primary mb-3 flex items-center justify-center shadow-lg shadow-primary/40">
             <Icon name="inventory_2" className="text-white" />
           </div>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Lavender Focus v1.0.4</p>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Local Data Storage Active</p>
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('settings.version', 'Lavender Focus v1.0.4')}</p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{t('settings.localData', 'Local Data Storage Active')}</p>
         </div>
       </div>
-
-      <Modal
-        isOpen={showLanguageModal}
-        onClose={() => setShowLanguageModal(false)}
-        variant="bottom-sheet"
-      >
-        <div className="flex flex-col p-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Select Language</h3>
-          <div className="flex flex-col gap-2">
-            {languages.map((lang) => (
-              <button
-                key={lang.value}
-                onClick={() => handleLanguageChange(lang.value)}
-                className={cn(
-                  "flex items-center justify-between p-4 rounded-xl transition-all",
-                  currentLangCode === lang.value
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
-                )}
-              >
-                <span className="font-medium">{lang.label}</span>
-                {currentLangCode === lang.value && (
-                  <Icon name="check" size={20} />
-                )}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setShowLanguageModal(false)}
-            className="mt-4 w-full py-4 text-center text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
-      </Modal>
     </Layout>
   );
 }
