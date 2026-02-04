@@ -115,6 +115,7 @@
     "addNew": "Añadir Nueva Etiqueta",
     "createTag": "Crear Etiqueta",
     "editTag": "Editar Etiqueta",
+    "viewAll": "Ver Todas",
     "deleteTitle": "Eliminar Etiqueta",
     "deleteDescription": "¿Estás seguro de que quieres eliminar esta etiqueta? Se eliminará de todos los ejercicios y elementos del inventario.",
     "name": "Nombre",
