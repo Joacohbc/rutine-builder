@@ -1,20 +1,32 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Layout } from '@/components/ui/Layout';
 import { Icon } from '@/components/ui/Icon';
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState('dark');
-  const [language, setLanguage] = useState('English');
+  const { theme, setTheme } = useTheme();
+  const { i18n } = useTranslation();
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
+  // Get current language code (first two letters)
+  const currentLangCode = i18n.language.split('-')[0];
+  const currentLanguage = currentLangCode === 'es' ? 'Español' : 'English';
+
   const languages = [
-    { label: 'English', value: 'English' },
-    { label: 'Español', value: 'Español' },
+    { label: 'English', value: 'en' },
+    { label: 'Español', value: 'es' },
   ];
+
+  const handleLanguageChange = async (langCode: string) => {
+    await i18n.changeLanguage(langCode);
+    localStorage.setItem('i18nextLng', langCode);
+    setShowLanguageModal(false);
+  };
 
   return (
     <Layout
@@ -50,7 +62,7 @@ export default function SettingsPage() {
                   <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">Language</p>
                 </div>
                 <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <p className="text-sm font-normal leading-normal">{language}</p>
+                  <p className="text-sm font-normal leading-normal">{currentLanguage}</p>
                   <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </button>
@@ -136,19 +148,16 @@ export default function SettingsPage() {
             {languages.map((lang) => (
               <button
                 key={lang.value}
-                onClick={() => {
-                  setLanguage(lang.value);
-                  setShowLanguageModal(false);
-                }}
+                onClick={() => handleLanguageChange(lang.value)}
                 className={cn(
                   "flex items-center justify-between p-4 rounded-xl transition-all",
-                  language === lang.value
+                  currentLangCode === lang.value
                     ? "bg-primary/10 text-primary border border-primary/20"
                     : "bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
                 )}
               >
                 <span className="font-medium">{lang.label}</span>
-                {language === lang.value && (
+                {currentLangCode === lang.value && (
                   <Icon name="check" size={20} />
                 )}
               </button>
