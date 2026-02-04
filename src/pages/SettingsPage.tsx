@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
-  
+
   // Get current language code (first two letters)
   const currentLangCode = i18n.language.split('-')[0];
   const currentLanguage = currentLangCode === 'es' ? 'Español' : 'English';
@@ -56,6 +56,26 @@ export default function SettingsPage() {
               onSelect={handleLanguageChange}
               title={t('settings.selectLanguage', 'Select Language')}
             />
+          
+            {/* ListItem: Manage Tags */}
+            <div className="relative flex flex-col w-full border-t border-slate-200 dark:border-slate-800">
+              <button
+                onClick={() => navigate('/settings/tags')}
+                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
+                    <Icon name="label" size={18} />
+                  </div>
+                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">
+                    {t('settings.manageTags', 'Manage Tags')}
+                  </p>
+                </div>
+                <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                  <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -65,7 +85,7 @@ export default function SettingsPage() {
           <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3">{t('settings.appearance', 'Appearance')}</h3>
           {/* RadioList Container */}
           <Form
-            onSubmit={() => {}}
+            onSubmit={() => { }}
             defaultValues={{ theme_selector: theme }}
           >
             <Form.RadioButtonGroup
