@@ -60,7 +60,9 @@
     "array": "Must be a list",
     "minArray": "Must have at least {{min}} items",
     "emptySeries": "Series must contain at least one exercise",
-    "uniqueName": "Name must be unique"
+    "uniqueName": "Name must be unique",
+    "mediaType": "Only images and videos are supported.",
+    "invalidYoutubeUrl": "Invalid YouTube URL"
   },
   "routineBuilder": {
     "newRoutine": "New Routine",
@@ -122,5 +124,9 @@
   "workInProgress": {
     "title": "Work In Progress",
     "description": "This feature is currently being developed. Check back soon for updates!"
+  },
+  "exercise": {
+    "enterYoutubeUrl": "Enter YouTube URL:",
+    "media": "Multimedia Gallery"
   }
 }

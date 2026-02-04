@@ -8,7 +8,9 @@ import type { ValidationResult } from '@/lib/validations';
 import { IconPicker } from '@/components/ui/IconPicker';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/Icon';
+import { MediaUploadInput } from '@/components/ui/MediaUploadInput';
 import type { TextareaHTMLAttributes } from 'react';
+import type { MediaItem } from '@/types';
 
 export type FormFieldValues = Record<string, unknown>;
 export type FormErrors = Record<string, string | undefined>;
@@ -302,8 +304,35 @@ function FormIconPicker({ name, validator, defaultValue, ...props }: FormIconPic
   );
 }
 
+// --- Form.Media ---
+interface FormMediaProps {
+  name: string;
+  defaultValue?: MediaItem[];
+  className?: string;
+  validator?: (value: MediaItem[]) => ValidationResult;
+}
+
+function FormMedia({ name, defaultValue, validator, className }: FormMediaProps) {
+  return (
+    <FormField
+      name={name}
+      defaultValue={defaultValue}
+      validator={validator ? (v) => validator(v as MediaItem[]) : undefined}
+    >
+      {({ setValue, value }) => (
+        <MediaUploadInput
+          value={value as MediaItem[]}
+          onChange={setValue}
+          className={className}
+        />
+      )}
+    </FormField>
+  );
+}
+
 Form.Field = FormField;
 Form.Input = FormInput;
 Form.Select = FormSelect;
 Form.IconPicker = FormIconPicker;
 Form.Textarea = FormTextarea;
+Form.Media = FormMedia;

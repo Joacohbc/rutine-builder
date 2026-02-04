@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useExercises } from '@/hooks/useExercises';
@@ -19,33 +19,31 @@ export default function ExerciseFormPage() {
     const { exercises, addExercise, updateExercise, loading: exercisesLoading } = useExercises();
     const { items: inventoryItems } = useInventory();
 
-    const [initialValues, setInitialValues] = useState<Partial<Exercise> | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
+    const initialValues = useMemo(() => {
         if (id) {
             if (!exercisesLoading && exercises.length > 0) {
-                const ex = exercises.find(e => e.id === Number(id));
-                if (ex) {
-                    setInitialValues(ex);
-                } else {
-                    // Handle not found?
-                    navigate('/exercises');
-                }
+                return exercises.find(e => e.id === Number(id)) || null;
             }
-        } else {
-            // New exercise defaults
-            setInitialValues({
-                title: '',
-                description: '',
-                muscleGroup: '',
-                tagIds: [],
-                media: [],
-                primaryEquipmentIds: [],
-                defaultType: 'weight_reps'
-            });
+            return null;
         }
-    }, [id, exercises, exercisesLoading, navigate]);
+
+        // New exercise defaults
+        return {
+            title: '',
+            description: '',
+            muscleGroup: '',
+            tagIds: [],
+            media: [],
+            primaryEquipmentIds: [],
+            defaultType: 'weight_reps'
+        };
+    }, [id, exercises, exercisesLoading]);
+
+    useEffect(() => {
+        if (id && !exercisesLoading && exercises.length > 0 && !initialValues) {
+            navigate('/exercises');
+        }
+    }, [id, exercises, exercisesLoading, initialValues, navigate]);
 
     const handleSave = async (values: Record<string, unknown>) => {
         const exerciseData: Exercise = {
@@ -108,121 +106,7 @@ export default function ExerciseFormPage() {
                     />
 
                     {/* Multimedia Gallery */}
-                    <Form.Field name="media">
-                        {({ value, setValue }) => {
-                            const media = (value as MediaItem[]) || [];
-
-                            const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-                                const file = e.target.files?.[0];
-                                if (!file) return;
-
-                                const isImage = file.type.startsWith('image/');
-                                const isVideo = file.type.startsWith('video/');
-
-                                if (!isImage && !isVideo) {
-                                    alert('Only images and videos are supported.');
-                                    return;
-                                }
-
-                                const reader = new FileReader();
-                                reader.onload = (event) => {
-                                    const base64Url = event.target?.result as string;
-                                    const newMedia: MediaItem = {
-                                        id: crypto.randomUUID(),
-                                        type: isImage ? 'image' : 'video',
-                                        url: base64Url
-                                    };
-                                    setValue([...media, newMedia]);
-                                };
-                                reader.readAsDataURL(file);
-                            };
-
-                            const addYouTube = () => {
-                                const url = prompt('Enter YouTube URL:');
-                                if (!url) return;
-
-                                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-                                const match = url.match(regExp);
-                                const videoId = (match && match[2].length === 11) ? match[2] : null;
-
-                                if (videoId) {
-                                    setValue([...media, {
-                                        id: crypto.randomUUID(),
-                                        type: 'youtube',
-                                        url: videoId,
-                                        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/0.jpg`
-                                    }]);
-                                } else {
-                                    alert('Invalid YouTube URL');
-                                }
-                            };
-
-                            const removeMedia = (mediaId: string) => {
-                                setValue(media.filter(m => m.id !== mediaId));
-                            };
-
-                            return (
-                                <section className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('exercise.media', 'Multimedia Gallery')}</label>
-                                        <button type="button" onClick={() => fileInputRef.current?.click()} className="text-primary text-xs font-bold flex items-center gap-1 hover:text-primary-dark transition-colors">
-                                            <Icon name="add_circle" size={16} /> {t('common.add', 'Add Media')}
-                                        </button>
-                                    </div>
-
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                        accept="image/*,video/*"
-                                        onChange={handleFileUpload}
-                                    />
-
-                                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x">
-                                        <button
-                                            type="button"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="flex-none w-24 h-24 rounded-2xl border-2 border-dashed border-gray-600 dark:border-gray-700 flex flex-col items-center justify-center gap-1 text-gray-500 hover:bg-white/5 transition-colors snap-start"
-                                        >
-                                            <Icon name="add_a_photo" size={24} />
-                                            <span className="text-[10px] font-medium">{t('common.upload', 'Upload')}</span>
-                                        </button>
-
-                                        {media.map(m => (
-                                            <div key={m.id} className="relative flex-none w-24 h-24 rounded-2xl overflow-hidden bg-surface-highlight snap-start group">
-                                                {m.type === 'image' && <img src={m.url} className="w-full h-full object-cover" />}
-                                                {m.type === 'video' && <video src={m.url} className="w-full h-full object-cover" />}
-                                                {m.type === 'youtube' && (
-                                                    <>
-                                                        <img src={m.thumbnailUrl} className="w-full h-full object-cover opacity-80" />
-                                                        <div className="absolute inset-0 flex items-center justify-center">
-                                                            <Icon name="play_circle" className="text-white drop-shadow-lg" size={24} />
-                                                        </div>
-                                                    </>
-                                                )}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeMedia(m.id)}
-                                                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <Icon name="close" size={12} />
-                                                </button>
-                                            </div>
-                                        ))}
-
-                                        <button
-                                            type="button"
-                                            onClick={addYouTube}
-                                            className="flex-none w-24 h-24 rounded-2xl bg-red-900/20 border border-red-900/50 flex flex-col items-center justify-center gap-1 text-red-500 hover:bg-red-900/30 transition-colors snap-start"
-                                        >
-                                            <Icon name="smart_display" size={24} />
-                                            <span className="text-[10px] font-bold">YOUTUBE</span>
-                                        </button>
-                                    </div>
-                                </section>
-                            );
-                        }}
-                    </Form.Field>
+                    <Form.Media name="media" />
 
                     {/* Required Equipment */}
                     <Form.Field name="primaryEquipmentIds">
