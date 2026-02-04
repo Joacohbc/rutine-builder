@@ -6,6 +6,7 @@ import { useExercises } from '@/hooks/useExercises';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
+import { TagItem } from '@/components/ui/TagItem';
 import { cn } from '@/lib/utils';
 
 interface TagSelectorProps {
@@ -206,28 +207,13 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
                modalFilteredTags.map(tag => {
                  const isSelected = selectedTagIds.includes(tag.id!);
                  return (
-                   <button
-                     type="button"
-                     key={tag.id}
-                     onClick={() => toggleTag(tag.id!)}
-                     className={cn(
-                       "flex items-center gap-2 px-4 py-3 rounded-xl border transition-all w-full sm:w-auto justify-between sm:justify-start",
-                       isSelected
-                         ? "bg-primary/5 border-primary"
-                         : "bg-surface-light dark:bg-surface-dark border-gray-200 dark:border-surface-highlight"
-                     )}
-                   >
-                      <div className="flex items-center gap-3">
-                         <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: tag.color }}
-                         />
-                         <span className={cn("font-medium", isSelected ? "text-primary" : "text-gray-700 dark:text-gray-300")}>
-                           {tag.name}
-                         </span>
-                      </div>
-                      {isSelected && <Icon name="check" size={18} className="text-primary" />}
-                   </button>
+                    <TagItem
+                      key={tag.id}
+                      tag={tag}
+                      onClick={() => toggleTag(tag.id!)}
+                      selected={isSelected}
+                      className="w-full sm:w-auto"
+                    />
                  );
                })
              )}
