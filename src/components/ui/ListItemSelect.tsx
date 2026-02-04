@@ -77,7 +77,7 @@ export function ListItemSelect({
                   "flex items-center justify-between p-4 rounded-xl transition-all",
                   value === option.value
                     ? "bg-primary/10 text-primary border border-primary/20"
-                    : "bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
+                    : "bg-surface-light dark:bg-surface-dark text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-800"
                 )}
               >
                 <span className="font-medium">{option.label}</span>
