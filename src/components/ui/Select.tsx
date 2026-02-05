@@ -23,6 +23,7 @@ export function Select({ className, label, options, error, ...props }: SelectPro
         <select
           className={cn(
             "w-full h-12 rounded-2xl bg-surface-light dark:bg-surface-dark border px-4 text-sm appearance-none outline-none transition-all",
+            "text-gray-900 dark:text-white",
             error
               ? "border-red-400 dark:border-red-500 focus:border-red-500"
               : "border-gray-200 dark:border-surface-highlight focus:border-primary focus:ring-1 focus:ring-primary",

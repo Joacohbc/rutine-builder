@@ -133,7 +133,13 @@
   },
   "iconPicker": {
     "title": "Seleccionar Icono",
-    "selectPlaceholder": "Seleccionar un icono..."
+    "selectPlaceholder": "Selecciona un icono...",
+    "common": "Comunes",
+    "all": "Todos los Iconos",
+    "loading": "Cargando iconos...",
+    "loadingMore": "Cargando más iconos...",
+    "notFound": "No se encontraron iconos",
+    "footer": "Mostrando {{count}} iconos"
   },
   "mobileWarning": {
     "title": "Solo para Teléfonos",
