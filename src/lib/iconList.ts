@@ -31,19 +31,19 @@ export const ALL_ICONS = [
   'videogame_asset', 'controller_gen', 'watch', 'watch_later',
 
   // Tools & Hardware
-  'build', 'construction', 'home_repair_service', 'hammer', 'wrench',
+  'build', 'construction', 'home_repair_service',
   'handyman', 'plumbing', 'architecture', 'rule', 'square_foot',
 
   // Places
   'store', 'storefront', 'warehouse', 'factory', 'local_shipping',
-  'local_post_office', 'local_library', 'gymnastics',
+  'local_post_office', 'local_library',
 
   // Food & Drink
   'lunch_dining', 'local_cafe', 'local_bar', 'local_pizza', 'bakery_dining',
   'nutrition', 'egg', 'rice_bowl', 'icecream',
 
   // Nature & Elements
-  'forest', 'park', 'grass', 'flower', 'local_florist', 'wb_sunny',
+  'forest', 'park', 'grass', 'local_florist', 'wb_sunny',
   'bedtime', 'thunderstorm', 'ac_unit', 'waves', 'terrain',
 
   // Arrows & Navigation
