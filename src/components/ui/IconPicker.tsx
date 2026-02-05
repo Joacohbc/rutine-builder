@@ -4,7 +4,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { cn } from '@/lib/utils';
-import { COMMON_ICONS, UNIQUE_ALL_ICONS } from '@/lib/iconList';
+import { COMMON_ICONS } from '@/lib/iconList';
 
 // Global cache to avoid re-fetching the large icons.json file multiple times
 let cachedAllIcons: string[] | null = null;
@@ -25,7 +25,7 @@ async function fetchAllIcons(): Promise<string[]> {
     })
     .catch(err => {
       console.error('Error loading icon_names.json:', err);
-      return UNIQUE_ALL_ICONS; // Fallback to static list
+      return COMMON_ICONS;
     });
 
   return isFetchingPromise;
@@ -54,40 +54,34 @@ export function IconPicker({
   const displayPlaceholder = placeholder || t('iconPicker.selectPlaceholder', 'Select an icon...');
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'common' | 'all'>('common');
-  const [fullIconList, setFullIconList] = useState<string[]>(UNIQUE_ALL_ICONS);
-  const [isLoading, setIsLoading] = useState(false);
+  const [fullIconList, setFullIconList] = useState<string[]>(COMMON_ICONS);
   const [displayCount, setDisplayCount] = useState(120);
   const observerTarget = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const resetScroll = () => {
+    setDisplayCount(120);
+    if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+    }
+  };
 
   const filteredIcons = useMemo(() => {
     const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
     const query = normalize(search);
 
-    const baseList = activeTab === 'common' ? COMMON_ICONS : fullIconList;
-
     if (!query) {
-      return baseList;
+      return fullIconList;
     }
 
-    // When searching, search across fullIconList regardless of tab if it's loaded
-    const searchSource = fullIconList.length > UNIQUE_ALL_ICONS.length ? fullIconList : UNIQUE_ALL_ICONS;
-    return searchSource.filter(icon => normalize(icon).includes(query));
-  }, [search, activeTab, fullIconList]);
+    return fullIconList.filter(icon => normalize(icon).includes(query));
+  }, [search, fullIconList]);
 
-  // Reset display count when filtering changes
-  useEffect(() => {
-    setDisplayCount(120);
-    // Reset scroll position to top
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
-    }
-  }, [search, activeTab]);
+
 
   // Infinite scroll observer
   useEffect(() => {
-    if (isLoading || filteredIcons.length <= displayCount) return;
+    if (filteredIcons.length <= displayCount) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -110,18 +104,15 @@ export function IconPicker({
     return () => {
       if (currentTarget) observer.unobserve(currentTarget);
     };
-  }, [filteredIcons.length, displayCount, isLoading]);
+  }, [filteredIcons.length, displayCount]);
 
   useEffect(() => {
-    const shouldLoad = isOpen && (activeTab === 'all' || search.length > 0);
-    if (shouldLoad && fullIconList.length <= UNIQUE_ALL_ICONS.length) {
-      setIsLoading(true);
+    if (isOpen && fullIconList.length <= COMMON_ICONS.length) {
       fetchAllIcons().then(icons => {
-        setFullIconList(icons);
-        setIsLoading(false);
+        setFullIconList([COMMON_ICONS, ...icons.filter(icon => !COMMON_ICONS.includes(icon))].flat() );
       });
     }
-  }, [isOpen, activeTab, search, fullIconList.length]);
+  }, [isOpen, fullIconList.length]);
 
   const handleSelect = (icon: string) => {
     onChange(icon);
@@ -149,7 +140,7 @@ export function IconPicker({
           onClick={() => {
             setIsOpen(true);
             setSearch('');
-            setActiveTab('common');
+            resetScroll();
           }}
           className={cn(
             "w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all text-left",
@@ -203,39 +194,13 @@ export function IconPicker({
             icon="search"
             placeholder={t('common.search', 'Search...')}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              resetScroll();
+            }}
             className="w-full"
             autoFocus
           />
-
-          {!search && (
-            <div className="flex gap-2 p-1 bg-gray-100 dark:bg-surface-highlight rounded-lg">
-              <button
-                type="button"
-                onClick={() => setActiveTab('common')}
-                className={cn(
-                  "flex-1 py-1.5 text-sm font-medium rounded-md transition-all",
-                  activeTab === 'common'
-                    ? "bg-white dark:bg-surface-dark shadow-sm text-primary"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
-                )}
-              >
-                {t('iconPicker.common', 'Common')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('all')}
-                className={cn(
-                  "flex-1 py-1.5 text-sm font-medium rounded-md transition-all",
-                  activeTab === 'all'
-                    ? "bg-white dark:bg-surface-dark shadow-sm text-primary"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
-                )}
-              >
-                {t('iconPicker.all', 'All Icons')}
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Content */}
@@ -243,14 +208,6 @@ export function IconPicker({
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-background-dark/50"
         >
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center h-full space-y-4">
-              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-              <p className="text-gray-500 font-medium">
-                {t('iconPicker.loading', 'Loading icons...')}
-              </p>
-            </div>
-          ) : (
             <>
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
                 {filteredIcons.slice(0, displayCount).map((icon) => (
@@ -287,7 +244,6 @@ export function IconPicker({
                 </div>
               )}
             </>
-          )}
         </div>
 
         {/* Footer info */}
