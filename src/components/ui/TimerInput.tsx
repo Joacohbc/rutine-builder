@@ -37,7 +37,7 @@ export function TimerInput({
 
   return (
     <div className={`flex flex-col gap-2 ${className || ''}`}>
-      <label className="text-center text-xs font-bold text-gray-400 uppercase">{label}</label>
+      <label className="text-center text-xs font-bold text-text-muted uppercase">{label}</label>
       <div className="flex flex-col items-center">
         <div 
           className="text-4xl font-bold font-mono py-2 cursor-pointer select-none" 
@@ -46,7 +46,7 @@ export function TimerInput({
           {formatTime(value)}
         </div>
         {target !== undefined && (
-           <div className="text-xs text-center text-gray-400 mt-1">Target: {formatTime(target)}</div>
+           <div className="text-xs text-center text-text-muted mt-1">Target: {formatTime(target)}</div>
         )}
         <Button 
           variant="ghost" 

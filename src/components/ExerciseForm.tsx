@@ -26,12 +26,12 @@ export function ExerciseForm({ initialValues, onSubmit, isEditing }: ExerciseFor
         >
             <Layout
                 header={
-                    <div className="flex items-center justify-between px-6 py-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md z-50">
-                        <button type="button" onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-surface-highlight text-gray-900 dark:text-white transition-colors">
+                    <div className="flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-md z-50">
+                        <button type="button" onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-surface-highlight text-text-main transition-colors">
                             <Icon name="close" />
                         </button>
-                        <h1 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? t('exercise.edit', 'Edit Exercise') : t('exercise.new', 'New Exercise')}</h1>
-                        <Button size="sm" type="submit" className="bg-primary text-white rounded-full px-6">{t('common.save', 'Save')}</Button>
+                        <h1 className="text-lg font-bold text-text-main">{isEditing ? t('exercise.edit', 'Edit Exercise') : t('exercise.new', 'New Exercise')}</h1>
+                        <Button size="sm" type="submit" className="bg-primary text-primary-foreground rounded-full px-6">{t('common.save', 'Save')}</Button>
                     </div>
                 }
             >
@@ -75,7 +75,7 @@ export function ExerciseForm({ initialValues, onSubmit, isEditing }: ExerciseFor
                                     selectedTagIds={(value as number[]) || []}
                                     onChange={setValue}
                                 />
-                                {error && <span className="text-xs text-red-500 pl-1">{error}</span>}
+                                {error && <span className="text-xs text-error pl-1">{error}</span>}
                             </div>
                         )}
                     </Form.Field>

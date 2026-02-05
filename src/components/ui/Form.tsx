@@ -255,19 +255,19 @@ function FormTextarea({ name, validator, label, className, defaultValue, ...prop
       {({ onChange, setValue, error, value, onBlur }) => (
         <div className="w-full">
           {label && (
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 ml-1">
+            <label className="block text-xs font-medium text-text-muted mb-1 ml-1">
               {label}
             </label>
           )}
           <div className={cn(
-            "group relative flex w-full rounded-2xl bg-surface-light dark:bg-surface-dark border transition-all duration-200 shadow-sm overflow-hidden",
+            "group relative flex w-full rounded-2xl bg-surface-input border transition-all duration-200 shadow-sm overflow-hidden",
             error
-              ? "border-red-400 dark:border-red-500 focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500"
-              : "border-gray-200 dark:border-surface-highlight focus-within:border-primary focus-within:ring-1 focus-within:ring-primary",
+              ? "border-error focus-within:border-error focus-within:ring-1 focus-within:ring-error"
+              : "border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary",
             className
           )}>
             <textarea
-              className="flex-1 w-full bg-transparent border-none p-4 text-base font-normal text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 min-h-[100px] resize-none"
+              className="flex-1 w-full bg-transparent border-none p-4 text-base font-normal text-text-main placeholder:text-text-muted focus:outline-none focus:ring-0 min-h-[100px] resize-none"
               {...props}
               value={String(value || '')}
               onBlur={onBlur}
@@ -277,13 +277,13 @@ function FormTextarea({ name, validator, label, className, defaultValue, ...prop
               }}
             />
             {error && (
-              <div className="absolute top-4 right-3 flex items-center justify-center text-red-400 dark:text-red-500 pointer-events-none">
+              <div className="absolute top-4 right-3 flex items-center justify-center text-error pointer-events-none">
                 <Icon name="error" size={20} />
               </div>
             )}
           </div>
           {error && (
-            <p className="text-xs text-red-500 dark:text-red-400 mt-1 ml-1">
+            <p className="text-xs text-error mt-1 ml-1">
               {error}
             </p>
           )}
@@ -438,11 +438,11 @@ function FormRadioButtonGroup({ name, options, validator, className, defaultValu
               checked={value === option.value}
               onBlur={onBlur}
               onChange={() => setValue(option.value)}
-              className={error ? "border-red-400 dark:border-red-500" : undefined}
+              className={error ? "border-error" : undefined}
             />
           ))}
           {error && (
-            <p className="text-xs text-red-500 dark:text-red-400 mt-1 ml-1">
+            <p className="text-xs text-error mt-1 ml-1">
               {error}
             </p>
           )}

@@ -52,8 +52,8 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
         >
             <Layout
                 header={
-                    <div className="flex items-center justify-between px-4 py-3 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/5">
-                        <button type="button" onClick={onCancel} className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-surface-highlight">
+                    <div className="flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-md border-b border-border">
+                        <button type="button" onClick={onCancel} className="p-2 -ml-2 rounded-full hover:bg-surface-highlight">
                             <Icon name="arrow_back" />
                         </button>
                         <Form.Field name="name" validator={routineValidators.name}>
@@ -65,7 +65,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                         className="bg-transparent text-center font-bold text-lg focus:outline-none focus:ring-1 focus:ring-primary rounded px-2 w-full max-w-50"
                                         placeholder={t('routineBuilder.routineName', 'Routine Name')}
                                     />
-                                    {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+                                    {error && <p className="text-xs text-error mt-1">{error}</p>}
                                 </div>
                             )}
                         </Form.Field>
@@ -172,7 +172,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                         return (
                             <div className="flex flex-col gap-6 py-6">
                                 {error && (
-                                    <div className="mx-4 p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+                                    <div className="mx-4 p-3 bg-error/10 border border-error/20 rounded-xl text-error text-sm font-medium flex items-center gap-2">
                                         <Icon name="error" size={20} />
                                         {t(error)}
                                     </div>
@@ -184,7 +184,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                         {s.type === 'superset' && (
                                             <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-primary via-primary to-primary/50 rounded-full">
                                                 <div className="absolute -left-4.5 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
-                                                    <span className="text-[9px] uppercase font-bold text-primary tracking-widest bg-background-light dark:bg-background-dark px-1">{t('routineBuilder.superset')}</span>
+                                                    <span className="text-[9px] uppercase font-bold text-primary tracking-widest bg-background px-1">{t('routineBuilder.superset')}</span>
                                                 </div>
                                             </div>
                                         )}
@@ -192,12 +192,12 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                         <div className={cn("flex flex-col gap-2", s.type === 'superset' ? "pl-4" : "")}>
                                             {/* Series Header / Controls */}
                                             <div className="flex justify-between items-center px-1 mb-1">
-                                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('routineBuilder.series', { count: sIndex + 1 })}</span>
+                                                <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{t('routineBuilder.series', { count: sIndex + 1 })}</span>
                                                 <div className="flex gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => toggleSeriesType(s.id)}
-                                                        className={cn("text-xs px-2 py-1 rounded border transition-colors", s.type === 'superset' ? "bg-primary text-white border-primary" : "bg-transparent border-gray-300 text-gray-500")}
+                                                        className={cn("text-xs px-2 py-1 rounded border transition-colors", s.type === 'superset' ? "bg-primary text-white border-primary" : "bg-transparent border-border text-text-muted")}
                                                     >
                                                         {s.type === 'superset' ? t('routineBuilder.union') : t('routineBuilder.standard')}
                                                     </button>
@@ -210,7 +210,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
 
                                                 return (
                                                     <div key={ex.id} className={cn(
-                                                        "bg-surface-light dark:bg-surface-dark p-4 shadow-sm border border-gray-100 dark:border-surface-highlight relative overflow-hidden",
+                                                        "bg-surface p-4 shadow-sm border border-border relative overflow-hidden",
                                                         s.type === 'superset'
                                                             ? "rounded-2xl first:rounded-tl-2xl first:rounded-tr-2xl last:rounded-bl-2xl last:rounded-br-2xl mb-1" // Stacked look for superset
                                                             : "rounded-2xl"
@@ -218,12 +218,12 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                         {/* Exercise Header */}
                                                         <div className="flex items-center justify-between mb-4">
                                                             <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-surface-input flex items-center justify-center text-primary">
+                                                                <div className="w-10 h-10 rounded-xl bg-surface-input flex items-center justify-center text-primary">
                                                                     <Icon name="fitness_center" />
                                                                 </div>
                                                                 <div>
-                                                                    <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{exerciseDef.title}</h3>
-                                                                    <p className="text-xs text-gray-500 font-medium">{exerciseDef.muscleGroup}</p>
+                                                                    <h3 className="text-base font-bold text-text-main leading-tight">{exerciseDef.title}</h3>
+                                                                    <p className="text-xs text-text-muted font-medium">{exerciseDef.muscleGroup}</p>
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-2">
@@ -231,14 +231,14 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                                     type="button"
                                                                     onClick={() => toggleTrackingType(s.id, ex.id)}
                                                                     className={cn(
-                                                                        "p-2 rounded-full hover:bg-gray-100 dark:hover:bg-surface-highlight transition-colors",
-                                                                        ex.trackingType === 'time' ? "text-primary" : "text-gray-400"
+                                                                        "p-2 rounded-full hover:bg-surface-highlight transition-colors",
+                                                                        ex.trackingType === 'time' ? "text-primary" : "text-text-muted"
                                                                     )}
                                                                     title={ex.trackingType === 'time' ? t('routineBuilder.switchToReps') : t('routineBuilder.switchToTime')}
                                                                 >
                                                                     <Icon name={ex.trackingType === 'time' ? "schedule" : "tag"} />
                                                                 </button>
-                                                                <button type="button" onClick={() => removeExercise(s.id, ex.id)} className="text-gray-400 hover:text-red-500">
+                                                                <button type="button" onClick={() => removeExercise(s.id, ex.id)} className="text-text-muted hover:text-error">
                                                                     <Icon name="close" />
                                                                 </button>
                                                             </div>
@@ -246,12 +246,12 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
 
                                                         {/* Sets Header */}
                                                         <div className="grid grid-cols-12 gap-2 mb-2 px-1">
-                                                            <div className="col-span-2 text-center text-[10px] uppercase font-bold text-gray-500 tracking-wider">{t('routineBuilder.set')}</div>
-                                                            <div className="col-span-4 text-center text-[10px] uppercase font-bold text-gray-500 tracking-wider">{t('routineBuilder.kg')}</div>
-                                                            <div className="col-span-4 text-center text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+                                                            <div className="col-span-2 text-center text-[10px] uppercase font-bold text-text-muted tracking-wider">{t('routineBuilder.set')}</div>
+                                                            <div className="col-span-4 text-center text-[10px] uppercase font-bold text-text-muted tracking-wider">{t('routineBuilder.kg')}</div>
+                                                            <div className="col-span-4 text-center text-[10px] uppercase font-bold text-text-muted tracking-wider">
                                                                 {ex.trackingType === 'time' ? t('routineBuilder.duration') : t('routineBuilder.reps')}
                                                             </div>
-                                                            <div className="col-span-2 text-center text-[10px] uppercase font-bold text-gray-500 tracking-wider">{t('routineBuilder.fail')}</div>
+                                                            <div className="col-span-2 text-center text-[10px] uppercase font-bold text-text-muted tracking-wider">{t('routineBuilder.fail')}</div>
                                                         </div>
 
                                                         {/* Set Rows */}
@@ -263,7 +263,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                                             type="button"
                                                                             onClick={() => removeSet(s.id, ex.id, set.id)}
                                                                             className={cn(
-                                                                                "size-6 rounded-full text-xs font-bold flex items-center justify-center transition-colors hover:bg-red-100 hover:text-red-500",
+                                                                                "size-6 rounded-full text-xs font-bold flex items-center justify-center transition-colors hover:bg-error/10 hover:text-error",
                                                                                 set.type === 'failure' ? "bg-primary text-white" : "bg-primary/10 text-primary"
                                                                             )}
                                                                         >
@@ -272,7 +272,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                                     </div>
                                                                     <div className="col-span-4">
                                                                         <input
-                                                                            className="w-full bg-gray-50 dark:bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-gray-900 dark:text-white h-9 focus:ring-1 focus:ring-primary placeholder-gray-400"
+                                                                            className="w-full bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-text-main h-9 focus:ring-1 focus:ring-primary placeholder-text-muted"
                                                                             placeholder="-"
                                                                             type="number"
                                                                             value={set.weight || ''}
@@ -282,20 +282,20 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                                     <div className="col-span-4">
                                                                         {set.type === 'failure' ? (
                                                                             <input
-                                                                                className="w-full bg-gray-50 dark:bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-gray-400 h-9"
+                                                                                className="w-full bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-text-muted h-9"
                                                                                 value="-"
                                                                                 placeholder="-"
                                                                                 disabled
                                                                             />
                                                                         ) : ex.trackingType === 'time' ? (
                                                                         <FormattedTimeInput
-                                                                                className="w-full bg-gray-50 dark:bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-gray-900 dark:text-white h-9 focus:ring-1 focus:ring-primary placeholder-gray-400"
+                                                                                className="w-full bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-text-main h-9 focus:ring-1 focus:ring-primary placeholder-text-muted"
                                                                                 value={set.time}
                                                                                 onChange={(val) => updateSet(s.id, ex.id, set.id, 'time', val)}
                                                                             />
                                                                         ) : (
                                                                             <input
-                                                                                className="w-full bg-gray-50 dark:bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-gray-900 dark:text-white h-9 focus:ring-1 focus:ring-primary placeholder-gray-400"
+                                                                                className="w-full bg-surface-input border-none rounded-lg text-center text-sm font-semibold text-text-main h-9 focus:ring-1 focus:ring-primary placeholder-text-muted"
                                                                                 placeholder="-"
                                                                                 type="number"
                                                                                 value={set.reps || ''}
@@ -307,7 +307,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => updateSet(s.id, ex.id, set.id, 'type', set.type === 'failure' ? 'working' : 'failure')}
-                                                                            className={cn("transition-colors", set.type === 'failure' ? "text-primary animate-pulse" : "text-gray-300 dark:text-gray-600 hover:text-primary")}
+                                                                            className={cn("transition-colors", set.type === 'failure' ? "text-primary animate-pulse" : "text-text-muted hover:text-primary")}
                                                                         >
                                                                             <Icon name="skull" filled={set.type === 'failure'} />
                                                                         </button>
@@ -319,7 +319,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                                         <button
                                                             type="button"
                                                             onClick={() => addSet(s.id, ex.id)}
-                                                            className="w-full mt-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 hover:text-primary transition-colors border border-dashed border-gray-300 dark:border-gray-700"
+                                                            className="w-full mt-3 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide rounded-lg hover:bg-surface-highlight hover:text-primary transition-colors border border-dashed border-border"
                                                         >
                                                             {t('routineBuilder.addSet')}
                                                         </button>
@@ -331,7 +331,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                             <button
                                                 type="button"
                                                 onClick={() => setShowSelector({ seriesId: s.id })}
-                                                className="flex items-center justify-center w-full py-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl text-gray-400 hover:text-primary hover:border-primary transition-colors gap-2"
+                                                className="flex items-center justify-center w-full py-4 border-2 border-dashed border-border rounded-2xl text-text-muted hover:text-primary hover:border-primary transition-colors gap-2"
                                             >
                                                 <Icon name="add_circle" />
                                                 <span className="font-medium text-sm">{t('routineBuilder.addExercise')}</span>

@@ -34,7 +34,7 @@ export function InventoryForm({ item, onClose, onSave }: InventoryFormProps) {
       isOpen={true}
       onClose={onClose}
       variant="centered"
-      className="max-w-sm p-6 border border-gray-200 dark:border-surface-highlight overflow-y-auto"
+      className="max-w-sm p-6 border border-border overflow-y-auto"
     >
       <h2 className="text-xl font-bold mb-4">{item ? t('inventory.titleEdit') : t('inventory.titleNew')}</h2>
       <Form

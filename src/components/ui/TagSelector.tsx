@@ -58,9 +58,9 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
     <>
       <div>
         <div className="flex items-center justify-between mb-2 px-1">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</label>
+          <label className="text-xs font-bold text-text-muted uppercase tracking-wider">{label}</label>
         </div>
-        <div className="bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-surface-highlight rounded-2xl p-4 space-y-4">
+        <div className="bg-surface border border-border rounded-2xl p-4 space-y-4">
         {/* Selected Tags */}
         <div className="flex flex-wrap gap-2">
           {selectedTags.map(tag => (
@@ -80,17 +80,17 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
             <button
               key={tag.id}
               onClick={() => toggleTag(tag.id!)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-surface-highlight text-gray-600 dark:text-gray-400 border border-transparent transition-all hover:border-gray-300 dark:hover:border-gray-600"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-highlight text-text-muted border border-transparent transition-all hover:border-border"
             >
               <span className="text-sm font-medium">{tag.name}</span>
             </button>
           ))}
         </div>
 
-        <div className="border-t border-gray-100 dark:border-surface-highlight pt-4 flex gap-2">
+        <div className="border-t border-border pt-4 flex gap-2">
             <button
                 type="button"
-                className="flex-1 flex items-center justify-center gap-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 text-text-muted hover:text-primary hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
                 onClick={() => navigate('/settings/tags')}
             >
                 <Icon name="add" size={18} />
@@ -98,7 +98,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
             </button>
             <button
                 type="button"
-                className="flex-1 flex items-center justify-center gap-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 text-text-muted hover:text-primary hover:bg-surface-highlight py-2 rounded-xl text-sm font-medium transition-colors"
                 onClick={() => setIsModalOpen(true)}
             >
                 <Icon name="list" size={18} />
@@ -113,24 +113,24 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         variant="fullscreen"
-        className="bg-background-light dark:bg-background-dark"
+        className="bg-background"
       >
-        <div className="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-surface-highlight">
+        <div className="flex items-center gap-3 p-4 border-b border-border">
           <button
             type="button"
             onClick={() => setIsModalOpen(false)}
-            className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-surface-highlight"
+            className="p-2 -ml-2 rounded-full hover:bg-surface-highlight"
           >
             <Icon name="arrow_back" />
           </button>
           <div className="flex-1 relative">
-             <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+             <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
              <input
                 autoFocus
                 value={modalSearch}
                 onChange={e => setModalSearch(e.target.value)}
                 placeholder={t('common.search', 'Search...')}
-                className="w-full bg-gray-100 dark:bg-surface-highlight rounded-xl py-3 pl-10 pr-4 outline-none border border-transparent focus:border-primary transition-all"
+                className="w-full bg-surface-input rounded-xl py-3 pl-10 pr-4 outline-none border border-transparent focus:border-primary transition-all"
              />
           </div>
         </div>
@@ -138,7 +138,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
         <div className="flex-1 overflow-y-auto p-4">
            <div className="flex flex-wrap gap-3">
              {modalFilteredTags.length === 0 ? (
-               <p className="text-gray-500 w-full text-center mt-10">No tags found matching "{modalSearch}"</p>
+               <p className="text-text-muted w-full text-center mt-10">No tags found matching "{modalSearch}"</p>
              ) : (
                modalFilteredTags.map(tag => {
                  const isSelected = selectedTagIds.includes(tag.id!);
@@ -156,7 +156,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
            </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200 dark:border-surface-highlight">
+        <div className="p-4 border-t border-border">
           <button
              type="button"
              onClick={() => setIsModalOpen(false)}

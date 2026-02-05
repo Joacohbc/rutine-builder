@@ -72,8 +72,8 @@ export function MediaUploadInput({ value = [], onChange, className }: MediaUploa
 	return (
 		<section className={className}>
 			<div className="flex items-center justify-between mb-2">
-				<label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('exercise.media', 'Multimedia Gallery')}</label>
-				<button type="button" onClick={() => fileInputRef.current?.click()} className="text-primary text-xs font-bold flex items-center gap-1 hover:text-primary-dark transition-colors">
+				<label className="text-xs font-bold text-text-muted uppercase tracking-wider">{t('exercise.media', 'Multimedia Gallery')}</label>
+				<button type="button" onClick={() => fileInputRef.current?.click()} className="text-primary text-xs font-bold flex items-center gap-1 hover:text-primary/80 transition-colors">
 					<Icon name="add_circle" size={16} /> {t('common.addItem')}
 				</button>
 			</div>
@@ -90,7 +90,7 @@ export function MediaUploadInput({ value = [], onChange, className }: MediaUploa
 				<button
 					type="button"
 					onClick={() => fileInputRef.current?.click()}
-					className="flex-none w-24 h-24 rounded-2xl border-2 border-dashed border-gray-600 dark:border-gray-700 flex flex-col items-center justify-center gap-1 text-gray-500 hover:bg-white/5 transition-colors snap-start"
+					className="flex-none w-24 h-24 rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-1 text-text-muted hover:bg-surface-highlight transition-colors snap-start"
 				>
 					<Icon name="add_a_photo" size={24} />
 					<span className="text-[10px] font-medium">{t('common.upload', 'Upload')}</span>

@@ -46,18 +46,18 @@ export function ExerciseSelector({ onSelect, onClose }: ExerciseSelectorProps) {
           <button
             key={ex.id}
             onClick={() => onSelect(ex)}
-            className="flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-surface-highlight text-left transition-colors"
+            className="flex items-center p-3 rounded-xl hover:bg-surface-highlight text-left transition-colors"
           >
-              <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-surface-input flex items-center justify-center mr-3 shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-surface-input flex items-center justify-center mr-3 shrink-0">
                 {ex.media.length > 0 && ex.media[0].type === 'image' ? (
                     <img src={ex.media[0].url} className="w-full h-full object-cover rounded-lg" />
                 ) : (
-                    <Icon name="fitness_center" size={20} className="text-gray-500" />
+                    <Icon name="fitness_center" size={20} className="text-text-muted" />
                 )}
               </div>
               <div>
                 <p className="font-semibold text-sm">{ex.title}</p>
-                <p className="text-xs text-gray-500">{ex.muscleGroup}</p>
+                <p className="text-xs text-text-muted">{ex.muscleGroup}</p>
               </div>
           </button>
         ))}

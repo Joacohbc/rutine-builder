@@ -37,7 +37,7 @@ export function ConfirmationDialog({
     >
       <div className="flex flex-col gap-2 mb-6">
         <h2 className="text-xl font-bold">{title}</h2>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">{description}</p>
+        <p className="text-text-muted text-sm">{description}</p>
       </div>
 
       <div className="flex gap-3 justify-end">
@@ -53,7 +53,7 @@ export function ConfirmationDialog({
             onConfirm();
             onClose();
           }}
-          className={variant === 'danger' ? 'bg-red-500 hover:bg-red-600 shadow-red-500/30 text-white' : ''}
+          className={variant === 'danger' ? 'bg-error hover:bg-error/90 shadow-error/30 text-white' : ''}
         >
           {effectiveConfirmText}
         </Button>

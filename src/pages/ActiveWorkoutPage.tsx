@@ -175,17 +175,17 @@ export default function ActiveWorkoutPage() {
   const currentExercise = exercises.find(e => e.id === currentStep.exerciseId);
 
   return (
-    <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark text-gray-900 dark:text-white">
+    <div className="flex flex-col h-screen bg-background text-text-main">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 pt-safe-top">
-        <button onClick={() => navigate(-1)} className="text-gray-500">
+        <button onClick={() => navigate(-1)} className="text-text-muted">
           <Icon name="close" />
         </button>
         <div className="flex flex-col items-center">
           <h2 className="font-bold text-sm">{routine.name}</h2>
           <span className="text-xs font-mono text-primary">{formatTime(timer)}</span>
         </div>
-        <button onClick={() => setShowMedia(true)} className={cn("text-gray-500", !currentExercise?.media.length && "opacity-20")}>
+        <button onClick={() => setShowMedia(true)} className={cn("text-text-muted", !currentExercise?.media.length && "opacity-20")}>
           <Icon name="movie" />
         </button>
       </div>
@@ -205,7 +205,7 @@ export default function ActiveWorkoutPage() {
         {/* Exercise Info */}
         <div className="text-center z-10">
           <h1 className="text-3xl font-bold mb-2 leading-tight">{currentExercise?.title || 'Unknown Exercise'}</h1>
-          <p className="text-lg text-gray-500">{currentExercise?.muscleGroup}</p>
+          <p className="text-lg text-text-muted">{currentExercise?.muscleGroup}</p>
           {currentStep.isSuperset && (
             <span className="inline-block mt-2 px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full animate-pulse">
               SUPERSET FLOW
@@ -216,7 +216,7 @@ export default function ActiveWorkoutPage() {
         {/* Inputs */}
         {isResting ? (
           <div className="flex flex-col items-center justify-center py-10 animate-fade-in">
-            <span className="text-gray-400 text-sm uppercase tracking-widest font-bold mb-4">Resting</span>
+            <span className="text-text-muted text-sm uppercase tracking-widest font-bold mb-4">Resting</span>
             <div className="text-6xl font-mono font-bold text-primary mb-8">{formatTime(restTimer)}</div>
             <Button onClick={handleNext} variant="secondary">Skip Rest</Button>
           </div>
@@ -224,15 +224,15 @@ export default function ActiveWorkoutPage() {
           <div className="w-full max-w-xs flex flex-col gap-6">
             <div className="grid grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
-                <label className="text-center text-xs font-bold text-gray-400 uppercase">KG</label>
+                <label className="text-center text-xs font-bold text-text-muted uppercase">KG</label>
                 <div className="relative">
                   <input
                     type="number"
                     value={actualWeight}
                     onChange={e => setActualWeight(Number(e.target.value))}
-                    className="w-full text-center text-4xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-gray-700 focus:border-primary focus:outline-none py-2"
+                    className="w-full text-center text-4xl font-bold bg-transparent border-b-2 border-border focus:border-primary focus:outline-none py-2"
                   />
-                  <div className="text-xs text-center text-gray-400 mt-1">Target: {currentStep.targetWeight}</div>
+                  <div className="text-xs text-center text-text-muted mt-1">Target: {currentStep.targetWeight}</div>
                 </div>
               </div>
               {currentStep.trackingType === 'time' ? (
@@ -243,15 +243,15 @@ export default function ActiveWorkoutPage() {
                 />
               ) : (
                 <div className="flex flex-col gap-2">
-                  <label className="text-center text-xs font-bold text-gray-400 uppercase">Reps</label>
+                  <label className="text-center text-xs font-bold text-text-muted uppercase">Reps</label>
                   <div className="relative">
                     <input
                       type="number"
                       value={actualReps}
                       onChange={e => setActualReps(Number(e.target.value))}
-                      className="w-full text-center text-4xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-gray-700 focus:border-primary focus:outline-none py-2"
+                      className="w-full text-center text-4xl font-bold bg-transparent border-b-2 border-border focus:border-primary focus:outline-none py-2"
                     />
-                    <div className="text-xs text-center text-gray-400 mt-1">Target: {currentStep.targetReps}</div>
+                    <div className="text-xs text-center text-text-muted mt-1">Target: {currentStep.targetReps}</div>
                   </div>
                 </div>
               )}

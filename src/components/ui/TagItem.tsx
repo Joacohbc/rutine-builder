@@ -32,7 +32,7 @@ export function TagItem({
         "flex items-center justify-between p-3 rounded-xl border transition-all w-full text-left",
         selected
           ? "bg-primary/5 border-primary"
-          : "bg-surface-light dark:bg-surface-dark border-slate-200 dark:border-slate-800 shadow-sm",
+          : "bg-surface border-border shadow-sm",
         onClick && "hover:border-primary cursor-pointer",
         className
       )}
@@ -44,7 +44,7 @@ export function TagItem({
         />
         <span className={cn(
           "font-medium",
-          selected ? "text-primary" : "text-slate-900 dark:text-white"
+          selected ? "text-primary" : "text-text-main"
         )}>
           {tag.name}
         </span>
@@ -63,7 +63,7 @@ export function TagItem({
                   e.stopPropagation();
                   onEdit(tag);
                 }}
-                className="p-2 text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-2 text-text-muted hover:text-primary transition-colors rounded-full hover:bg-surface-highlight"
                 type="button"
               >
                 <Icon name="edit" size={20} />
@@ -75,7 +75,7 @@ export function TagItem({
                   e.stopPropagation();
                   onDelete(tag);
                 }}
-                className="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-500 transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-2 text-text-muted hover:text-error transition-colors rounded-full hover:bg-surface-highlight"
                 type="button"
               >
                 <Icon name="delete" size={20} />

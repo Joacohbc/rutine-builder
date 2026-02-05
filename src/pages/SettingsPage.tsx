@@ -28,14 +28,14 @@ export default function SettingsPage() {
   return (
     <Layout
       header={
-        <div className="flex items-center p-4 pb-2 justify-between border-b border-slate-200 dark:border-slate-800/50">
+        <div className="flex items-center p-4 pb-2 justify-between border-b border-border">
           <button
             onClick={() => navigate(-1)}
-            className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            className="text-text-main flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-highlight transition-colors"
           >
             <Icon name="arrow_back" size={24} />
           </button>
-          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">{t('common.settings', 'Settings')}</h2>
+          <h2 className="text-text-main text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">{t('common.settings', 'Settings')}</h2>
         </div>
       }
     >
@@ -45,7 +45,7 @@ export default function SettingsPage() {
           {/* SectionHeader */}
           <h3 className="text-primary text-sm font-bold uppercase tracking-wider px-2 pb-3 pt-2">{t('settings.general', 'General')}</h3>
           {/* Grouped List Items Background */}
-          <div className="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="bg-surface rounded-xl overflow-hidden shadow-sm border border-border">
             {/* ListItem: Language */}
             <ListItemSelect
               icon="language"
@@ -58,20 +58,20 @@ export default function SettingsPage() {
             />
           
             {/* ListItem: Manage Tags */}
-            <div className="relative flex flex-col w-full border-t border-slate-200 dark:border-slate-800">
+            <div className="relative flex flex-col w-full border-t border-border">
               <button
                 onClick={() => navigate('/settings/tags')}
-                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+                className="flex items-center gap-4 px-4 min-h-[60px] justify-between w-full hover:bg-surface-highlight transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary">
                     <Icon name="label" size={18} />
                   </div>
-                  <p className="text-slate-900 dark:text-white text-base font-medium leading-normal flex-1 truncate text-left">
+                  <p className="text-text-main text-base font-medium leading-normal flex-1 truncate text-left">
                     {t('tags.title', 'Manage Tags')}
                   </p>
                 </div>
-                <div className="shrink-0 flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <div className="shrink-0 flex items-center gap-2 text-text-muted">
                   <Icon name="chevron_right" size={20} className="group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </button>
@@ -110,8 +110,8 @@ export default function SettingsPage() {
           <div className="size-10 rounded-xl bg-primary mb-3 flex items-center justify-center shadow-lg shadow-primary/40">
             <Icon name="inventory_2" className="text-white" />
           </div>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('settings.version', 'Lavender Focus v1.0.4')}</p>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{t('settings.localData', 'Local Data Storage Active')}</p>
+          <p className="text-xs font-medium text-text-muted">{t('settings.version', 'Lavender Focus v1.0.4')}</p>
+          <p className="text-[10px] text-text-muted mt-1">{t('settings.localData', 'Local Data Storage Active')}</p>
         </div>
       </div>
     </Layout>

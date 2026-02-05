@@ -60,14 +60,14 @@ export default function ManageTagsPage() {
   return (
     <Layout
       header={
-        <div className="flex items-center p-4 pb-2 justify-between border-b border-slate-200 dark:border-slate-800/50">
+        <div className="flex items-center p-4 pb-2 justify-between border-b border-border">
            <button
             onClick={() => navigate(-1)}
-            className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            className="text-text-main flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-highlight transition-colors"
           >
             <Icon name="arrow_back" size={24} />
           </button>
-          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">
+          <h2 className="text-text-main text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">
             {t('tags.title', 'Manage Tags')}
           </h2>
         </div>
@@ -91,7 +91,7 @@ export default function ManageTagsPage() {
           ))}
           
           {tags.length === 0 && (
-            <div className="text-center py-10 text-slate-500 dark:text-slate-400">
+            <div className="text-center py-10 text-text-muted">
               {t('tags.noTags', 'No tags found. Create one to get started.')}
             </div>
           )}
@@ -104,7 +104,7 @@ export default function ManageTagsPage() {
         variant="bottom-sheet"
       >
         <div className="p-4 pb-8 space-y-6">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          <h3 className="text-lg font-bold text-text-main">
             {editingTag ? t('tags.editTag', 'Edit Tag') : t('tags.createTag', 'Create Tag')}
           </h3>
           
@@ -137,7 +137,7 @@ export default function ManageTagsPage() {
             >
               {({ value, onChange, error }) => (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label className="text-sm font-medium text-text-main">
                     {t('tags.color', 'Color')}
                   </label>
                   <div className="flex flex-wrap gap-3">
@@ -148,7 +148,7 @@ export default function ManageTagsPage() {
                         onClick={() => onChange(color)}
                         className={`w-8 h-8 rounded-full border-2 transition-transform ${
                           value === color 
-                            ? 'border-slate-900 dark:border-white scale-110' 
+                            ? 'border-text-main scale-110'
                             : 'border-transparent hover:scale-105'
                         }`}
                         style={{ backgroundColor: color }}
@@ -157,7 +157,7 @@ export default function ManageTagsPage() {
                     ))}
                   </div>
                   <div 
-                    className="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden mt-2"
+                    className="h-2 w-full rounded-full bg-surface-highlight overflow-hidden mt-2"
                   >
                      <div className="h-full transition-all duration-300" style={{ width: '100%', backgroundColor: String(value) }} />
                   </div>
