@@ -133,7 +133,11 @@
   },
   "iconPicker": {
     "title": "Select Icon",
-    "selectPlaceholder": "Select an icon..."
+    "selectPlaceholder": "None",
+    "common": "Common",
+    "all": "All Icons",
+    "notFound": "No icons found",
+    "footer": "Showing {{count}} icons"
   },
   "mobileWarning": {
     "title": "Mobile Only",

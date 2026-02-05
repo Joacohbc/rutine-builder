@@ -84,9 +84,6 @@ export function IconPicker({
             </>
           ) : (
             <>
-              <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
-                <Icon name="add_reaction" className="text-gray-400" size={20} />
-              </div>
               <span className="flex-1 text-gray-500 dark:text-gray-400">
                 {displayPlaceholder}
               </span>
@@ -136,7 +133,7 @@ export function IconPicker({
                     : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
                 )}
               >
-                Common
+                {t('iconPicker.common', 'Common')}
               </button>
               <button
                 type="button"
@@ -148,7 +145,7 @@ export function IconPicker({
                     : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
                 )}
               >
-                All Icons
+                {t('iconPicker.all', 'All Icons')}
               </button>
             </div>
           )}
@@ -166,7 +163,7 @@ export function IconPicker({
                   "aspect-square flex flex-col items-center justify-center gap-2 p-2 rounded-xl border transition-all hover:scale-105 active:scale-95",
                   value === icon
                     ? "bg-primary/10 border-primary text-primary"
-                    : "bg-surface-light dark:bg-surface-dark border-transparent hover:border-gray-200 dark:hover:border-surface-highlight shadow-sm"
+                    : "bg-surface-light text-primary dark:bg-surface-dark border-transparent hover:border-gray-200 dark:hover:border-surface-highlight shadow-sm"
                 )}
                 title={icon}
               >
@@ -178,14 +175,14 @@ export function IconPicker({
           {filteredIcons.length === 0 && (
             <div className="flex flex-col items-center justify-center h-40 text-gray-500">
               <Icon name="search_off" size={48} className="mb-2 opacity-20" />
-              <p>No icons found</p>
+              <p>{t('iconPicker.notFound', 'No icons found')}</p>
             </div>
           )}
         </div>
 
         {/* Footer info */}
         <div className="p-3 text-center text-xs text-gray-400 border-t border-gray-100 dark:border-surface-highlight bg-surface-light dark:bg-surface-dark">
-          Showing {filteredIcons.length} icons
+          {t('iconPicker.footer', 'Showing {{count}} icons', { count: filteredIcons.length })}
         </div>
       </Modal>
     </>
