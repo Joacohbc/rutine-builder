@@ -53,6 +53,7 @@ export default function SpeechTestPage() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [textToSpeak, setTextToSpeak] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSupported] = useState(() => {
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -130,6 +131,11 @@ export default function SpeechTestPage() {
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = i18n.language;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
     window.speechSynthesis.speak(utterance);
   };
 
@@ -227,10 +233,10 @@ export default function SpeechTestPage() {
                 <Button
                     variant="secondary"
                     onClick={handleSpeak}
-                    disabled={!textToSpeak}
+                    disabled={!textToSpeak || isSpeaking}
                     icon="volume_up"
                 >
-                    {t('speechTest.speak')}
+                    {isSpeaking ? (i18n.language.startsWith('es') ? 'Reproduciendo...' : 'Speaking...') : t('speechTest.speak')}
                 </Button>
             </div>
         </section>
