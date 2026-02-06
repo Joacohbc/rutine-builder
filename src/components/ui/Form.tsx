@@ -255,19 +255,19 @@ function FormTextarea({ name, validator, label, className, defaultValue, ...prop
       {({ onChange, setValue, error, value, onBlur }) => (
         <div className="w-full">
           {label && (
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 ml-1">
+            <label className="block text-xs font-medium text-text-secondary mb-1 ml-1">
               {label}
             </label>
           )}
           <div className={cn(
-            "group relative flex w-full rounded-2xl bg-surface-light dark:bg-surface-dark border transition-all duration-200 shadow-sm overflow-hidden",
+            "group relative flex w-full rounded-2xl bg-surface border transition-all duration-200 shadow-sm overflow-hidden",
             error
               ? "border-red-400 dark:border-red-500 focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500"
-              : "border-gray-200 dark:border-surface-highlight focus-within:border-primary focus-within:ring-1 focus-within:ring-primary",
+              : "border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary",
             className
           )}>
             <textarea
-              className="flex-1 w-full bg-transparent border-none p-4 text-base font-normal text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 min-h-[100px] resize-none"
+              className="flex-1 w-full bg-transparent border-none p-4 text-base font-normal text-text-main placeholder:text-text-muted focus:outline-none focus:ring-0 min-h-[100px] resize-none"
               {...props}
               value={String(value || '')}
               onBlur={onBlur}

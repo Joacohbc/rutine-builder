@@ -16,8 +16,8 @@ export function RadioButton({ className, label, icon, description, checked, onCh
     <label
       className={cn(
         "group cursor-pointer flex items-center gap-4 rounded-xl border p-4 flex-row-reverse shadow-sm transition-all",
-        "bg-surface-light dark:bg-surface-dark",
-        "border-slate-200 dark:border-slate-800",
+        "bg-surface",
+        "border-border",
         "hover:border-primary/50",
         className
       )}
@@ -27,11 +27,9 @@ export function RadioButton({ className, label, icon, description, checked, onCh
         type="radio"
         className={cn(
             "peer h-5 w-5 appearance-none rounded-full border-2 bg-transparent transition-all", 
-            "border-slate-400 dark:border-slate-600",
+            "border-text-muted",
             "checked:bg-primary checked:border-primary checked:bg-[image:var(--radio-dot-svg)]",
             "focus:outline-none focus:ring-2 focus:ring-primary/20",
-            // The peer class is kept on input for potential external peer-styling, 
-            // though we handle internal styling via props/JS state mainly.
         )}
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
@@ -43,16 +41,16 @@ export function RadioButton({ className, label, icon, description, checked, onCh
             name={icon} 
             className={cn(
                 "transition-colors",
-                checked ? "text-primary" : "text-slate-500 dark:text-slate-400"
+                checked ? "text-primary" : "text-text-muted"
             )} 
           />
         )}
         <div className="flex flex-col">
-          <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">
+          <p className="text-text-main text-sm font-medium leading-normal">
             {label}
           </p>
           {description && (
-             <p className="text-xs text-slate-500">{description}</p>
+             <p className="text-xs text-text-secondary">{description}</p>
           )}
         </div>
       </div>
