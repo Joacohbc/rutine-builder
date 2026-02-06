@@ -210,7 +210,7 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
 
                                                 return (
                                                     <div key={ex.id} className={cn(
-                                                        "bg-surface-light dark:bg-surface-dark p-4 shadow-sm border border-gray-100 dark:border-surface-highlight relative overflow-hidden",
+                                                        "bg-surface p-4 shadow-sm border border-gray-100 dark:border-surface-highlight relative overflow-hidden",
                                                         s.type === 'superset'
                                                             ? "rounded-2xl first:rounded-tl-2xl first:rounded-tr-2xl last:rounded-bl-2xl last:rounded-br-2xl mb-1" // Stacked look for superset
                                                             : "rounded-2xl"
