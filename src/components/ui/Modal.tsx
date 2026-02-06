@@ -64,7 +64,7 @@ export function Modal({
         <div
           ref={contentRef}
           className={cn(
-            "bg-surface-light dark:bg-surface-dark shadow-2xl pointer-events-auto flex flex-col transition-all",
+            "bg-surface shadow-2xl pointer-events-auto flex flex-col transition-all",
             variant === 'centered' && "w-full max-w-lg rounded-3xl max-h-[90vh]",
             variant === 'bottom-sheet' && "w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh]",
             variant === 'fullscreen' && "w-full h-full",
@@ -75,7 +75,7 @@ export function Modal({
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 z-10"
+              className="absolute top-4 right-4 p-2 text-text-muted hover:text-text-secondary z-10"
               aria-label="Close modal"
             >
               <Icon name="close" size={24} />

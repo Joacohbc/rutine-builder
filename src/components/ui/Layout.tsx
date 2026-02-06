@@ -8,9 +8,9 @@ interface LayoutProps {
 
 export function Layout({ children, header }: LayoutProps) {
   return (
-    <div className="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+    <div className="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-background">
       {header && (
-        <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md pt-safe-top">
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md pt-safe-top">
           {header}
         </header>
       )}
