@@ -5,6 +5,7 @@ import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { useSpeechRecognition, useSpeechSynthesis } from '@/lib/webSpeech';
 
 export default function SpeechTestPage() {
@@ -136,25 +137,17 @@ export default function SpeechTestPage() {
 
                 {/* Voice Selector */}
                 {voices.length > 0 && (
-                    <div className="relative">
-                        <select
-                            className="w-full h-12 pl-4 pr-10 rounded-2xl bg-surface border border-border text-text-main appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-                            value={selectedVoice ? selectedVoice.name : ''}
-                            onChange={(e) => {
-                                const voice = voices.find(v => v.name === e.target.value);
-                                if (voice) setSelectedVoice(voice);
-                            }}
-                        >
-                             {voices.map((voice) => (
-                                <option key={voice.name} value={voice.name}>
-                                    {voice.name} ({voice.lang})
-                                </option>
-                            ))}
-                        </select>
-                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
-                            <Icon name="expand_more" size={20} />
-                        </div>
-                    </div>
+                    <Select
+                        options={voices.map(voice => ({
+                            label: `${voice.name} (${voice.lang})`,
+                            value: voice.name
+                        }))}
+                        value={selectedVoice ? selectedVoice.name : ''}
+                        onChange={(e) => {
+                            const voice = voices.find(v => v.name === e.target.value);
+                            if (voice) setSelectedVoice(voice);
+                        }}
+                    />
                 )}
 
 
