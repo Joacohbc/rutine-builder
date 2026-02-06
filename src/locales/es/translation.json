@@ -160,5 +160,14 @@
     "descriptionPlaceholder": "Añade indicaciones, consejos de forma o instrucciones...",
     "equipment": "Equipo Requerido",
     "tags": "Músculos y Etiquetas"
+  },
+  "speechTest": {
+    "title": "Prueba Web Speech API",
+    "startListening": "Escuchar",
+    "stopListening": "Parar",
+    "speak": "Hablar",
+    "transcript": "Transcripción",
+    "placeholder": "Texto para hablar...",
+    "notSupported": "Web Speech API no soportada en este navegador"
   }
 }

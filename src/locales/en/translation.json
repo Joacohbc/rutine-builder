@@ -160,5 +160,14 @@
     "descriptionPlaceholder": "Add cues, form tips, or setup instructions...",
     "equipment": "Required Equipment",
     "tags": "Muscle & Tags"
+  },
+  "speechTest": {
+    "title": "Web Speech API Test",
+    "startListening": "Start Listening",
+    "stopListening": "Stop Listening",
+    "speak": "Speak",
+    "transcript": "Transcript",
+    "placeholder": "Text to speak...",
+    "notSupported": "Web Speech API not supported in this browser"
   }
 }
