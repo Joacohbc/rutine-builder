@@ -113,7 +113,7 @@ export function TagSelector({ selectedTagIds, onChange, type, label = 'Muscles &
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         variant="fullscreen"
-        className="bg-background-light dark:bg-background-dark"
+        className="bg-background"
       >
         <div className="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-surface-highlight">
           <button
