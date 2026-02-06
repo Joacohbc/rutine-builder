@@ -146,7 +146,13 @@ export function useSpeechSynthesis(language: string) {
          if (voices.length > 0) {
             const defaultVoice = voices.find(v => v.lang.startsWith(language));
              if (defaultVoice) {
-                 setSelectedVoice(defaultVoice);
+                 const timer = setTimeout(() => {
+                     setSelectedVoice((prev) => {
+                        if (prev?.voiceURI === defaultVoice.voiceURI) return prev;
+                        return defaultVoice;
+                     });
+                 }, 0);
+                 return () => clearTimeout(timer);
              }
          }
     }, [language, voices]);
