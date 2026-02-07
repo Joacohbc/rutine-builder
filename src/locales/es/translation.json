@@ -81,7 +81,9 @@
     "reps": "Reps",
     "addSet": "+ Añadir Set",
     "addExercise": "Añadir Ejercicio",
-    "addSeries": "+ Añadir Serie"
+    "addSeries": "+ Añadir Serie",
+    "removeSeries": "Eliminar Serie",
+    "seriesType": "Tipo de Serie"
   },
   "inventory": {
     "titleEdit": "Editar Item",

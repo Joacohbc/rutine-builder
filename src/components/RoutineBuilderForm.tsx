@@ -6,6 +6,7 @@ import { Layout } from '@/components/ui/Layout';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Form, type FormFieldValues } from '@/components/ui/Form';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { routineValidators } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 import { FormattedTimeInput } from '@/components/ui/FormattedTimeInput';
@@ -88,6 +89,10 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                             updateSeriesList([...series, newSeries]);
                         };
 
+                        const removeSeries = (seriesId: string) => {
+                            updateSeriesList(series.filter(s => s.id !== seriesId));
+                        };
+
                         const updateSet = (seriesId: string, exId: string, setId: string, field: keyof WorkoutSet, val: string | number | boolean) => {
                             updateSeriesList(series.map(s => {
                                 if (s.id !== seriesId) return s;
@@ -149,13 +154,6 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                             }));
                         };
 
-                        const toggleSeriesType = (seriesId: string) => {
-                            updateSeriesList(series.map(s => {
-                                if (s.id !== seriesId) return s;
-                                return { ...s, type: s.type === 'standard' ? 'superset' : 'standard' };
-                            }));
-                        };
-
                         const toggleTrackingType = (seriesId: string, exId: string) => {
                             updateSeriesList(series.map(s => {
                                 if (s.id !== seriesId) return s;
@@ -194,13 +192,30 @@ export function RoutineBuilderForm({ initialValues, onSubmit, onCancel }: Routin
                                             <div className="flex justify-between items-center px-1 mb-1">
                                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('routineBuilder.series', { count: sIndex + 1 })}</span>
                                                 <div className="flex gap-2">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => toggleSeriesType(s.id)}
-                                                        className={cn("text-xs px-2 py-1 rounded border transition-colors", s.type === 'superset' ? "bg-primary text-white border-primary" : "bg-transparent border-gray-300 text-gray-500")}
-                                                    >
-                                                        {s.type === 'superset' ? t('routineBuilder.union') : t('routineBuilder.standard')}
-                                                    </button>
+                                                    {/* Series Type Selector */}
+                                                    <SegmentedControl
+                                                        options={[
+                                                            { value: 'standard', label: t('routineBuilder.standard') },
+                                                            { value: 'superset', label: t('routineBuilder.superset') },
+                                                        ]}
+                                                        value={s.type}
+                                                        onChange={(newType) => {
+                                                            updateSeriesList(series.map(serie => 
+                                                                serie.id === s.id ? { ...serie, type: newType } : serie
+                                                            ));
+                                                        }}
+                                                    />
+                                                    {/* Remove Series Button */}
+                                                    {series.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeSeries(s.id)}
+                                                            className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                                                            title={t('routineBuilder.removeSeries')}
+                                                        >
+                                                            <Icon name="delete" size={18} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
 
