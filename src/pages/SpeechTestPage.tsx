@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { useSpeechRecognition, useSpeechSynthesis } from '@/lib/webSpeech';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 
 export default function SpeechTestPage() {
 	const { t, i18n } = useTranslation();
@@ -29,7 +30,7 @@ export default function SpeechTestPage() {
 		selectedVoice,
 		setSelectedVoice,
 		speak
-	} = useSpeechSynthesis(i18n.language);
+	} = useSpeechSynthesis();
 
 	// Helper to get error message from code
 	const getErrorMessage = (errorCode: string | null) => {
@@ -41,7 +42,7 @@ export default function SpeechTestPage() {
 	};
 
 	const errorMessage = getErrorMessage(error);
-	const isSupported = isRecognitionSupported; // Simplified check for now
+	const isSupported = isRecognitionSupported;
 
 	if (!isSupported) {
 		return (

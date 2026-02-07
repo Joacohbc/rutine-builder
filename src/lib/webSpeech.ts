@@ -1,197 +1,117 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-
 // --- Speech Recognition Types ---
+
+/**
+ * Event fired when speech recognition returns results.
+ * Contains the transcribed text and whether the result is final or partial.
+ */
 export interface SpeechRecognitionEvent {
   results: {
     [index: number]: {
       [index: number]: {
-        transcript: string;
+        transcript: string; // The recognized text
       };
-      isFinal: boolean;
+      isFinal: boolean; // true if final result, false if interim/partial
     };
-    length: number;
+    length: number; // Total number of results
   };
 }
 
+/**
+ * Event fired when speech recognition encounters an error.
+ * Examples: "no-speech", "network", "not-allowed", "aborted"
+ */
 export interface SpeechRecognitionErrorEvent {
-  error: string;
+  error: string; // Error type identifier
 }
 
+/**
+ * Interface for a SpeechRecognition instance.
+ * Represents the object returned by `new SpeechRecognition()` or `new webkitSpeechRecognition()`.
+ * Extends EventTarget to support addEventListener/removeEventListener.
+ */
 export interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-  onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: SpeechRecognitionErrorEvent) => void;
-  onend: () => void;
+  continuous: boolean; // Whether the recognition should continue listening after pauses
+  interimResults: boolean; // Whether to return partial results while the user is speaking
+  lang: string; // Language code (e.g., "es-ES", "en-US")
+  start: () => void; // Start listening
+  stop: () => void; // Stop listening (processes what was heard)
+  abort: () => void; // Cancel immediately (discards everything)
+  onresult: (event: SpeechRecognitionEvent) => void; // Handler for recognition results
+  onerror: (event: SpeechRecognitionErrorEvent) => void; // Handler for errors
+  onend: () => void; // Handler for when recognition ends
 }
 
+/**
+ * Constructor type for SpeechRecognition.
+ * Represents the class itself (not an instance), used to define the type of window.SpeechRecognition.
+ * This allows TypeScript to understand: `const API = window.SpeechRecognition; new API();`
+ */
 interface SpeechRecognitionConstructor {
-  new(): SpeechRecognition;
+  new(): SpeechRecognition; // Calling 'new' returns a SpeechRecognition instance
 }
 
+/**
+ * Extend the global Window interface to include Web Speech API properties.
+ * This tells TypeScript that these properties exist on the browser's window object.
+ * Both are optional (?) because not all browsers support the Speech Recognition API.
+ */
 declare global {
   interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    SpeechRecognition?: SpeechRecognitionConstructor; // Standard API (Chrome, Edge, Opera)
+    webkitSpeechRecognition?: SpeechRecognitionConstructor; // Prefixed API (Safari, older Chrome)
   }
 }
 
-// --- Hooks ---
+// --- Helper Functions ---
+export const isSpeechRecognitionSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+export const isSpeechSynthesisSupported = 'speechSynthesis' in window;
 
-export function useSpeechRecognition(language: string) {
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isSupported] = useState(() => {
-    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-  });
+/**
+ * Creates a configured SpeechRecognition instance
+ * @param language - Language code (e.g., "es-ES", "en-US")
+ * @returns Promise that resolves with the configured recognition instance
+ */
+export function createSpeechRecognition(language: string): Promise<SpeechRecognition> {
+  return new Promise((resolve, reject) => {
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+    if (!SpeechRecognitionAPI) {
+      reject(new Error('Speech Recognition not supported'));
+      return;
+    }
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionAPI();
+    
+    // Allow recognition to continue listening even after pauses
     recognition.continuous = true;
+    
+    // Return partial results while the user is speaking (real-time text)
     recognition.interimResults = true;
+    
+    // Set the language for recognition (e.g., "es-ES" for Spanish, "en-US" for English)
     recognition.lang = language;
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let currentTranscript = '';
-      for (let i = 0; i < event.results.length; ++i) {
-        currentTranscript += event.results[i][0].transcript;
-      }
-      setTranscript(currentTranscript);
-      setError(null);
-    };
-
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      setError(event.error);
-      setIsListening(false);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognitionRef.current = recognition;
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
-    };
-  }, [language]);
-
-  const toggleListening = useCallback(() => {
-    if (!recognitionRef.current) return;
-
-    if (isListening) {
-      recognitionRef.current.stop();
-    } else {
-      setError(null);
-      setTranscript('');
-      recognitionRef.current.start();
-      setIsListening(true);
-    }
-  }, [isListening]);
-
-  return {
-    isSupported,
-    isListening,
-    transcript,
-    error,
-    toggleListening
-  };
+    resolve(recognition);
+  });
 }
 
-export function useSpeechSynthesis(language: string) {
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
-  const [isSupported] = useState(() => 'speechSynthesis' in window);
-
-  useEffect(() => {
-    if (!isSupported) return;
-
-    const updateVoices = () => {
-      const availableVoices = window.speechSynthesis.getVoices();
-      setVoices(availableVoices);
-
-      // Try to set a default voice matching the language
-      if (!selectedVoice && availableVoices.length > 0) {
-        const defaultVoice = availableVoices.find(v => v.lang.startsWith(language)) || availableVoices[0];
-        setSelectedVoice(defaultVoice);
-      }
-    };
-
-    updateVoices();
+/**
+ * Loads available speech synthesis voices
+ * @returns Promise that resolves with the list of available voices
+ */
+export function loadVoices(): Promise<SpeechSynthesisVoice[]> {
+  return new Promise((resolve) => {
+    const voices = window.speechSynthesis.getVoices();
+    
+    if (voices.length > 0) {
+      resolve(voices);
+      return;
+    }
 
     // Chrome requires this event to load voices
-    window.speechSynthesis.onvoiceschanged = updateVoices;
-
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
+    window.speechSynthesis.onvoiceschanged = () => {
+      const loadedVoices = window.speechSynthesis.getVoices();
+      resolve(loadedVoices);
     };
-  }, [isSupported, language, selectedVoice]);
-
-  // Update default voice when language changes if no manual selection has been made (or force update)
-  useEffect(() => {
-    if (voices.length > 0) {
-      const defaultVoice = voices.find(v => v.lang.startsWith(language));
-      if (defaultVoice) {
-        const timer = setTimeout(() => {
-          setSelectedVoice((prev) => {
-            if (prev?.voiceURI === defaultVoice.voiceURI) return prev;
-            return defaultVoice;
-          });
-        }, 0);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [language, voices]);
-
-
-  const speak = useCallback((text: string) => {
-    if (!text || !isSupported) return;
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-  }, [language, selectedVoice, isSupported]);
-
-  const cancel = useCallback(() => {
-    if (isSupported) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  }, [isSupported]);
-
-  return {
-    isSupported,
-    isSpeaking,
-    voices,
-    selectedVoice,
-    setSelectedVoice,
-    speak,
-    cancel
-  };
+  });
 }
