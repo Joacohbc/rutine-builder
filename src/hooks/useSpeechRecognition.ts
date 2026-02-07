@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   createSpeechRecognition,
   isSpeechRecognitionSupported,
+  recognitionLanguages,
   type SpeechRecognition,
   type SpeechRecognitionEvent,
   type SpeechRecognitionErrorEvent
@@ -62,8 +63,12 @@ export function useSpeechRecognition(language: string) {
     } else {
       setError(null);
       setTranscript('');
-      recognitionRef.current.start();
-      setIsListening(true);
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err) {
+        setError((err as Error).message || 'start-failed');
+      }
     }
   }, [isListening]);
 
@@ -72,6 +77,7 @@ export function useSpeechRecognition(language: string) {
     isListening,
     transcript,
     error,
-    toggleListening
+    toggleListening,
+    recognitionLanguages
   };
 }

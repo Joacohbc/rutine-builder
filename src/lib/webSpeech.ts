@@ -67,6 +67,32 @@ export const isSpeechRecognitionSupported = !!(window.SpeechRecognition || windo
 export const isSpeechSynthesisSupported = 'speechSynthesis' in window;
 
 /**
+ * Represents a language option for speech recognition.
+ */
+export interface RecognitionLanguage {
+  label: string;
+  value: string;
+}
+
+/**
+ * Available languages for speech recognition.
+ * Similar to how voices are provided for synthesis.
+ */
+export const recognitionLanguages: RecognitionLanguage[] = [
+  { label: 'Español (ES)', value: 'es-ES' },
+  { label: 'Español (MX)', value: 'es-MX' },
+  { label: 'Español (AR)', value: 'es-AR' },
+  { label: 'English (US)', value: 'en-US' },
+  { label: 'English (UK)', value: 'en-GB' },
+  { label: 'Português (BR)', value: 'pt-BR' },
+  { label: 'Français', value: 'fr-FR' },
+  { label: 'Deutsch', value: 'de-DE' },
+  { label: 'Italiano', value: 'it-IT' },
+  { label: '日本語', value: 'ja-JP' },
+  { label: '中文', value: 'zh-CN' },
+];
+
+/**
  * Creates a configured SpeechRecognition instance
  * @param language - Language code (e.g., "es-ES", "en-US")
  * @returns Promise that resolves with the configured recognition instance

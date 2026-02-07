@@ -8,12 +8,14 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
+import { cn } from '@/lib/utils';
 
 export default function SpeechTestPage() {
 	const { t, i18n } = useTranslation();
 	const navigate = useNavigate();
 
 	const [textToSpeak, setTextToSpeak] = useState('');
+	const [recognitionLang, setRecognitionLang] = useState(i18n.language);
 
 	// Use custom hooks
 	const {
@@ -21,8 +23,9 @@ export default function SpeechTestPage() {
 		transcript,
 		error,
 		toggleListening,
-		isSupported: isRecognitionSupported
-	} = useSpeechRecognition(i18n.language);
+		isSupported: isRecognitionSupported,
+		recognitionLanguages
+	} = useSpeechRecognition(recognitionLang);
 
 	const {
 		isSpeaking,
@@ -32,7 +35,7 @@ export default function SpeechTestPage() {
 		speak
 	} = useSpeechSynthesis();
 
-	// Helper to get error message from code
+	// Helper to get 					error message from code
 	const getErrorMessage = (errorCode: string | null) => {
 		if (!errorCode) return null;
 		if (errorCode === 'network') return t('speechTest.errors.network');
@@ -91,20 +94,44 @@ export default function SpeechTestPage() {
 				<section className="flex flex-col gap-4">
 					<div className="flex items-center justify-between">
 						<h3 className="text-primary text-sm font-bold uppercase tracking-wider">
-							Speech to Text
+							{t('speechTest.speechToText')}
 						</h3>
-						<span className={`text-xs font-medium px-2 py-1 rounded-full ${isListening ? 'bg-green-500/10 text-green-500' : 'bg-surface text-text-muted'}`}>
-							{isListening ? (i18n.language.startsWith('es') ? 'Escuchando...' : 'Listening...') : (i18n.language.startsWith('es') ? 'Inactivo' : 'Idle')}
+						<span className={cn(
+							"text-xs font-medium px-2 py-1 rounded-full",
+							isListening ? 'bg-green-500/10 text-green-500' : 'bg-surface text-text-muted'
+						)}>
+							{isListening ? t('speechTest.listening') : t('speechTest.idle')}
 						</span>
 					</div>
 
-					<div className="bg-surface rounded-xl p-4 min-h-[120px] border border-border shadow-sm relative">
+					<div className={cn(
+						"bg-surface rounded-xl p-4 min-h-[120px] border shadow-sm relative transition-colors",
+						isListening ? "border-green-500/40" : "border-border"
+					)}>
 						{transcript ? (
 							<p className="text-text-main leading-relaxed">{transcript}</p>
 						) : (
-							<p className="text-text-muted italic text-sm">{t('speechTest.transcript')}...</p>
+							<p className="text-text-muted italic text-sm">
+								{isListening ? t('speechTest.speakNow') : `${t('speechTest.transcript')}...`}
+							</p>
+						)}
+
+						{isListening && !transcript && (
+							<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1">
+								<span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+								<span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse [animation-delay:150ms]" />
+								<span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse [animation-delay:300ms]" />
+							</div>
 						)}
 					</div>
+
+					<Select
+						label={t('speechTest.recognitionLanguage')}
+						options={recognitionLanguages}
+						value={recognitionLang}
+						onChange={(e) => setRecognitionLang(e.target.value)}
+						disabled={isListening}
+					/>
 
 					{errorMessage && (
 						<div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 text-red-500 text-sm font-medium border border-red-500/20">
@@ -126,7 +153,7 @@ export default function SpeechTestPage() {
 				{/* Text to Speech Section */}
 				<section className="flex flex-col gap-4">
 					<h3 className="text-primary text-sm font-bold uppercase tracking-wider">
-						Text to Speech
+						{t('speechTest.textToSpeech')}
 					</h3>
 
 					<div className="flex flex-col gap-3">
@@ -151,14 +178,13 @@ export default function SpeechTestPage() {
 							/>
 						)}
 
-
 						<Button
 							variant="secondary"
 							onClick={() => speak(textToSpeak)}
 							disabled={!textToSpeak || isSpeaking}
 							icon="volume_up"
 						>
-							{isSpeaking ? (i18n.language.startsWith('es') ? 'Reproduciendo...' : 'Speaking...') : t('speechTest.speak')}
+							{isSpeaking ? t('speechTest.speaking') : t('speechTest.speak')}
 						</Button>
 					</div>
 				</section>
