@@ -85,7 +85,7 @@ export interface InventoryItem {
   id?: number;
   name: string;
   icon: string; // Material Symbol name
-  tagIds: number[];
+  tags: Tag[];
   status: InventoryStatus;
   condition: InventoryCondition;
   quantity: number;
@@ -110,20 +110,16 @@ export interface Exercise {
   title: string;
   description?: string;
 
-  /** Primary muscle group label (e.g., "Chest", "Back") */
-  muscleGroup?: string;
+  /**
+   * Tags for categorizing the exercise (e.g., muscle groups, equipment types, workout styles).
+   */
+  tags: Tag[];
 
   /**
-   * Tag IDs for categorizing the exercise (e.g., muscle groups, equipment types, workout styles).
-   * References Tag.id values stored in the tags object store.
+   * Primary equipment required for the exercise.
+   * Empty array for bodyweight exercises.
    */
-  tagIds: number[];
-
-  /**
-   * IDs of primary equipment required for the exercise.
-   * References InventoryItem.id values. Empty array for bodyweight exercises.
-   */
-  primaryEquipmentIds: number[];
+  primaryEquipment: InventoryItem[];
 
   media: MediaItem[];
   defaultType: ExerciseType;
