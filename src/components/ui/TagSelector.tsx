@@ -11,13 +11,13 @@ import { TagItem } from '@/components/ui/TagItem';
 import type { Tag } from '@/types';
 
 interface TagSelectorProps {
-  selectedTags: Tag[];
+  activeTags: Tag[];
   onChange: (tags: Tag[]) => void;
   type: 'inventory' | 'exercise';
   label?: string;
 }
 
-export function TagSelector({ selectedTags = [], onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {
+export function TagSelector({ activeTags = [], onChange, type, label = 'Muscles & Tags' }: TagSelectorProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -28,7 +28,10 @@ export function TagSelector({ selectedTags = [], onChange, type, label = 'Muscle
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalSearch, setModalSearch] = useState('');
 
-  const selectedTagIds = useMemo(() => selectedTags.map(t => t.id!).filter(Boolean), [selectedTags]);
+  // Ensure activeTags with Translation already applied (from useTags)
+  const selectedTags = useMemo(() => {
+    return tags.filter(tag => activeTags.some(active => active.id === tag.id));
+  }, [activeTags, tags]);
 
   // Calculate most used tags for this type
   const suggestedTags = useMemo(() => {
@@ -48,14 +51,14 @@ export function TagSelector({ selectedTags = [], onChange, type, label = 'Muscle
       // Exclude already selected tags
       // Sort by usage count
       // Take top 4
-      .filter(tag => !selectedTagIds.includes(tag.id!))
+      .filter(tag => !selectedTags.some(t => t.id === tag.id))
       .sort((a, b) => (usageCount[b.id!] || 0) - (usageCount[a.id!] || 0))
       .slice(0, 4);
-  }, [type, inventoryItems, exercises, tags, selectedTagIds]);
+  }, [type, inventoryItems, exercises, tags, selectedTags]);
 
   // Toggle tag selection
   const toggleTag = (tag: Tag) => {
-    if (selectedTagIds.includes(tag.id!)) {
+    if (selectedTags.some(t => t.id === tag.id)) {
       onChange(selectedTags.filter(t => t.id !== tag.id));
     } else {
       onChange([...selectedTags, tag]);
@@ -156,7 +159,7 @@ export function TagSelector({ selectedTags = [], onChange, type, label = 'Muscle
               <p className="text-gray-500 w-full text-center mt-10">No tags found matching "{modalSearch}"</p>
             ) : (
               modalFilteredTags.map(tag => {
-                const isSelected = selectedTagIds.includes(tag.id!);
+                const isSelected = selectedTags.some(t => t.id === tag.id);
                 return (
                   <TagItem
                     key={tag.id}

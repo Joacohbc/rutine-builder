@@ -91,7 +91,7 @@ export function InventoryForm({ item, onClose, onSave }: InventoryFormProps) {
           {({ value, setValue }) => (
             <TagSelector
               label={t('common.tags')}
-              selectedTags={value as Tag[]}
+              activeTags={value as Tag[]}
               onChange={setValue}
               type={'inventory'} />
           )}

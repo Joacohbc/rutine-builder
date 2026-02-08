@@ -73,7 +73,7 @@ export function ExerciseForm({ initialValues, onSubmit, isEditing }: ExerciseFor
                                 <TagSelector
                                     label={t('exercise.tags')}
                                     type="exercise"
-                                    selectedTags={(value as Tag[]) || []}
+                                    activeTags={(value as Tag[]) || []}
                                     onChange={setValue}
                                 />
                                 {error && <span className="text-xs text-red-500 pl-1">{error}</span>}
