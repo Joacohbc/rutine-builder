@@ -43,7 +43,6 @@ export default function ExerciseFormPage() {
             id: id ? Number(id) : undefined,
             title: values.title as string,
             description: values.description as string,
-            muscleGroup: (values.muscleGroup as string) || '', // Preserve if exists
             tags: values.tags as Tag[],
             media: values.media as MediaItem[],
             primaryEquipment: values.primaryEquipment as InventoryItem[],

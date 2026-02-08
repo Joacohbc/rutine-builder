@@ -59,7 +59,7 @@ export type MediaType = 'image' | 'video' | 'youtube';
  * - 'custom': user-created tag
  * - MuscleGroup value (e.g. 'chest', 'back'): system muscle tag belonging to that group
  */
-export type TagType = 'custom' | MuscleGroup;
+export type TagType = 'custom' | 'muscle_group';
 
 /** Category labels for organizing exercises and equipment */
 export interface Tag {

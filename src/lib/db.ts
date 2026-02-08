@@ -23,7 +23,7 @@ function buildMuscleSystemTags(): Omit<Tag, 'id'>[] {
     muscleTags.push({
       name: muscle,
       color: MUSCLE_GROUP_COLORS[group],
-      type: group,
+      type: 'muscle_group',
       system: true,
     });
   }
@@ -86,5 +86,12 @@ export const initDB = async (): Promise<IDBPDatabase<RoutineDB>> => {
     },
   });
 };
+
+export const DB_TABLES = Object.freeze({
+  INVENTORY: 'inventory',
+  EXERCISES: 'exercises',
+  ROUTINES: 'routines',
+  TAGS: 'tags',
+});
 
 export const dbPromise = initDB();

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { dbPromise } from '@/lib/db';
+import { dbPromise, DB_TABLES } from '@/lib/db';
 import { validateSchema, tagValidators } from '@/lib/validations';
 import type { Tag } from '@/types';
 
@@ -20,15 +20,114 @@ export const TAG_COLORS = [
   '#64748b', // slate-500
 ];
 
-export function useTags() {
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(true);
+const fetchTags = async (): Promise<Tag[]> => {
+  try {
+    const db = await dbPromise;
+    const allTags = await db.getAll(DB_TABLES.TAGS);
+    return allTags;
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    throw error;
+  }
+}
 
-  const fetchTags = useCallback(async () => {
+const addTag = async (tags: Tag[], tag: Tag) => {
+
+  // User-created tags are never system tags
+  const userTag: Omit<Tag, 'id'> = { ...tag, system: false, type: 'custom' };
+  
+  // Check validations and uniqueness
+  const errors = validateSchema(userTag, tagValidators);
+  if (tags.some(t => t.name.toLowerCase() === userTag.name.toLowerCase())) {
+      errors['name'] = { key: 'validations.uniqueName' };
+  }
+  
+  if (Object.keys(errors).length > 0) {
+    throw errors
+  }
+
+  // Assign a random color if not provided
+  if (!userTag.color) {
+    userTag.color = TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
+  }
+
+  const db = await dbPromise;
+  const id = await db.add(DB_TABLES.TAGS, userTag as Tag);
+  return id;
+};
+
+const updateTag = async (tags: Tag[], tag: Tag) => {
+  if (!tag.id) return;
+
+  // System tags cannot be modified by the user
+  const existing = tags.find(t => t.id === tag.id);
+  if (existing?.system) {
+    throw { key: 'validations.systemTagProtected' };
+  }
+
+  const errors = validateSchema(tag, tagValidators);
+
+  // Check uniqueness
+  if (tags.some(t => t.id !== tag.id && t.name.toLowerCase() === tag.name.toLowerCase())) {
+      errors['name'] = { key: 'validations.uniqueName' };
+  }
+
+  if (Object.keys(errors).length > 0) {
+    throw errors;
+  };
+
+  const db = await dbPromise;
+  await db.put(DB_TABLES.TAGS, tag);};
+
+const deleteTag = async (tags: Tag[], id: number) => {
+  // System tags cannot be deleted
+  const existing = tags.find(t => t.id === id);
+  if (existing?.system) {
+    throw { key: 'validations.systemTagProtected' };
+  }
+
+  const db = await dbPromise;
+  const tx = db.transaction([ DB_TABLES.TAGS, DB_TABLES.INVENTORY, DB_TABLES.EXERCISES ], 'readwrite');
+  
+  // 1. Delete the tag
+  await tx.objectStore(DB_TABLES.TAGS).delete(id);
+
+  // 2. Remove tagId from Inventory Items
+  let cursor = await tx.objectStore(DB_TABLES.INVENTORY).openCursor();
+  while (cursor) {
+    const item = cursor.value;
+    const tagsIds = item.tags.map((t: Tag) => t.id);
+
+    if (item.tags.length > 0 && tagsIds.includes(id)) {
+      item.tags = item.tags.filter((t: Tag) => t.id !== id);
+      await cursor.update(item);
+    }
+    cursor = await cursor.continue();
+  }
+
+  // 3. Remove tagId from Exercises
+  let exCursor = await tx.objectStore(DB_TABLES.EXERCISES).openCursor();
+  while (exCursor) {
+    const exercise = exCursor.value;
+    const tagsIds = exercise.tags.map((t: Tag) => t.id);
+    if (exercise.tags && tagsIds.includes(id)) {
+      exercise.tags = exercise.tags.filter((t: Tag) => t.id !== id);
+      await exCursor.update(exercise);
+    }
+    exCursor = await exCursor.continue();
+  }
+  
+  await tx.done;
+};
+
+export function useTags() {
+  const [ tags, setTags ] = useState<Tag[]>([]);
+  const [ loading, setLoading ] = useState(true);
+
+  const refresh = useCallback(async () => {
     try {
-      const db = await dbPromise;
-      const allTags = await db.getAll('tags');
-      setTags(allTags);
+      const fetchedTags = await fetchTags();
+      setTags(fetchedTags);
     } catch (error) {
       console.error('Failed to fetch tags:', error);
     } finally {
@@ -37,88 +136,30 @@ export function useTags() {
   }, []);
 
   useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
+    refresh();
+  }, [refresh]);
 
-  const addTag = async (tag: Omit<Tag, 'id' | 'system'>) => {
-    // User-created tags are never system tags
-    const userTag: Omit<Tag, 'id'> = { ...tag, system: false, type: 'custom' };
-    const errors = validateSchema(userTag, tagValidators);
+  const onAddTag = useCallback(async (tag: Tag) => {
+    await addTag(tags, tag);
+    await refresh();
+  }, [tags, refresh]);
 
-    // Check uniqueness
-    if (tags.some(t => t.name.toLowerCase() === userTag.name.toLowerCase())) {
-        errors['name'] = { key: 'validations.uniqueName' };
-    }
+  const onUpdateTag = useCallback(async (tag: Tag) => {
+    await updateTag(tags, tag);
+    await refresh();
+  }, [tags, refresh]);
 
-    if (Object.keys(errors).length > 0) throw errors;
+  const onDeleteTag = useCallback(async (id: number) => {
+    await deleteTag(tags, id);
+    await refresh();
+  }, [tags, refresh]);
 
-    const db = await dbPromise;
-    const id = await db.add('tags', userTag as Tag);
-    await fetchTags();
-    return id;
+  return { 
+    tags, 
+    loading, 
+    addTag: onAddTag, 
+    updateTag: onUpdateTag, 
+    deleteTag: onDeleteTag, 
+    refresh 
   };
-
-  const updateTag = async (tag: Tag) => {
-    if (!tag.id) return;
-
-    // System tags cannot be modified by the user
-    const existing = tags.find(t => t.id === tag.id);
-    if (existing?.system) {
-      throw { _system: { key: 'validations.systemTagProtected' } };
-    }
-
-    const errors = validateSchema(tag, tagValidators);
-
-    // Check uniqueness
-    if (tags.some(t => t.id !== tag.id && t.name.toLowerCase() === tag.name.toLowerCase())) {
-        errors['name'] = { key: 'validations.uniqueName' };
-    }
-
-    if (Object.keys(errors).length > 0) throw errors;
-
-    const db = await dbPromise;
-    await db.put('tags', tag);
-    await fetchTags();
-  };
-
-  const deleteTag = async (id: number) => {
-    // System tags cannot be deleted
-    const existing = tags.find(t => t.id === id);
-    if (existing?.system) {
-      throw { _system: { key: 'validations.systemTagProtected' } };
-    }
-
-    const db = await dbPromise;
-    const tx = db.transaction(['tags', 'inventory', 'exercises'], 'readwrite');
-    
-    // 1. Delete the tag
-    await tx.objectStore('tags').delete(id);
-
-    // 2. Remove tagId from Inventory Items
-    let cursor = await tx.objectStore('inventory').openCursor();
-    while (cursor) {
-      const item = cursor.value;
-      if (item.tagIds && item.tagIds.includes(id)) {
-        item.tagIds = item.tagIds.filter(tId => tId !== id);
-        await cursor.update(item);
-      }
-      cursor = await cursor.continue();
-    }
-
-    // 3. Remove tagId from Exercises
-    let exCursor = await tx.objectStore('exercises').openCursor();
-    while (exCursor) {
-      const exercise = exCursor.value;
-      if (exercise.tagIds && exercise.tagIds.includes(id)) {
-        exercise.tagIds = exercise.tagIds.filter(tId => tId !== id);
-        await exCursor.update(exercise);
-      }
-      exCursor = await exCursor.continue();
-    }
-    
-    await tx.done;
-    await fetchTags();
-  };
-
-  return { tags, loading, addTag, updateTag, deleteTag, refresh: fetchTags };
 }

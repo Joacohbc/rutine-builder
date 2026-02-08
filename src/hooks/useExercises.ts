@@ -1,28 +1,84 @@
 import { useState, useEffect, useCallback } from 'react';
-import { dbPromise } from '@/lib/db';
+import { dbPromise, DB_TABLES } from '@/lib/db';
 import { validateSchema, exerciseValidators } from '@/lib/validations';
 import type { Exercise, Tag, InventoryItem } from '@/types';
+
+const fetchExercises = async (): Promise<Exercise[]> => {
+  try {
+    const db = await dbPromise;
+    const [allExercises, allTags, allInventory] = await Promise.all([
+      db.getAll(DB_TABLES.EXERCISES),
+      db.getAll(DB_TABLES.TAGS),
+      db.getAll(DB_TABLES.INVENTORY)
+    ]);
+    
+    // Hydrate tags and equipment
+    const hydratedExercises = allExercises.map((ex: any) => ({
+      ...ex,
+      tags: ex.tags || (ex.tagIds || []).map((id: number) => allTags.find((t: Tag) => t.id === id)).filter(Boolean) as Tag[],
+      primaryEquipment: ex.primaryEquipment || (ex.primaryEquipmentIds || []).map((id: number) => allInventory.find((i: InventoryItem) => i.id === id)).filter(Boolean) as InventoryItem[]
+    }));
+
+    return hydratedExercises;
+  } catch (error) {
+    console.error('Failed to fetch exercises:', error);
+    throw error;
+  }
+};
+
+const addExercise = async (exercise: Omit<Exercise, 'id'>) => {
+  const errors = validateSchema(exercise, exerciseValidators);
+  if (Object.keys(errors).length > 0) throw errors;
+
+  const db = await dbPromise;
+  // Dehydrate for storage
+  const exToSave = {
+      ...exercise,
+      tagIds: (exercise.tags || []).map(t => t.id).filter(Boolean) as number[],
+      primaryEquipmentIds: (exercise.primaryEquipment || []).map(i => i.id).filter(Boolean) as number[]
+  };
+  // @ts-ignore
+  delete exToSave.tags;
+  // @ts-ignore
+  delete exToSave.primaryEquipment;
+
+  const id = await db.add(DB_TABLES.EXERCISES, exToSave as any);
+  return id;
+};
+
+const updateExercise = async (exercise: Exercise) => {
+  if (!exercise.id) return;
+
+  const errors = validateSchema(exercise, exerciseValidators);
+  if (Object.keys(errors).length > 0) throw errors;
+
+  const db = await dbPromise;
+  // Dehydrate for storage
+  const exToSave = {
+      ...exercise,
+      tagIds: (exercise.tags || []).map(t => t.id).filter(Boolean) as number[],
+      primaryEquipmentIds: (exercise.primaryEquipment || []).map(i => i.id).filter(Boolean) as number[]
+  };
+  // @ts-ignore
+  delete exToSave.tags;
+  // @ts-ignore
+  delete exToSave.primaryEquipment;
+
+  await db.put(DB_TABLES.EXERCISES, exToSave as any);
+};
+
+const deleteExercise = async (id: number) => {
+  const db = await dbPromise;
+  await db.delete(DB_TABLES.EXERCISES, id);
+};
 
 export function useExercises() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchExercises = useCallback(async () => {
+  const refresh = useCallback(async () => {
     try {
-      const db = await dbPromise;
-      const [allExercises, allTags, allInventory] = await Promise.all([
-        db.getAll('exercises'),
-        db.getAll('tags'),
-        db.getAll('inventory')
-      ]);
-      
-      // Hydrate tags and equipment
-      const hydratedExercises = allExercises.map((ex: any) => ({
-        ...ex,
-        tags: ex.tags || (ex.tagIds || []).map((id: number) => allTags.find((t: Tag) => t.id === id)).filter(Boolean) as Tag[],
-        primaryEquipment: ex.primaryEquipment || (ex.primaryEquipmentIds || []).map((id: number) => allInventory.find((i: InventoryItem) => i.id === id)).filter(Boolean) as InventoryItem[]
-      }));
-
+      const hydratedExercises = await fetchExercises();
       setExercises(hydratedExercises);
     } catch (error) {
       console.error('Failed to fetch exercises:', error);
@@ -32,57 +88,31 @@ export function useExercises() {
   }, []);
 
   useEffect(() => {
-    fetchExercises();
-    // Cleanup function could go here but tricky with global state
-  }, [fetchExercises]);
+    refresh();
+  }, [refresh]);
 
-  const addExercise = async (exercise: Omit<Exercise, 'id'>) => {
-    const errors = validateSchema(exercise, exerciseValidators);
-    if (Object.keys(errors).length > 0) throw errors;
+  const onAddExercise = useCallback(async (exercise: Omit<Exercise, 'id'>) => {
+    const id = await addExercise(exercise);
+    await refresh();
+    return id;
+  }, [refresh]);
 
-    const db = await dbPromise;
-    // Dehydrate for storage
-    const exToSave = {
-        ...exercise,
-        tagIds: (exercise.tags || []).map(t => t.id).filter(Boolean) as number[],
-        primaryEquipmentIds: (exercise.primaryEquipment || []).map(i => i.id).filter(Boolean) as number[]
-    };
-    // @ts-ignore
-    delete exToSave.tags;
-    // @ts-ignore
-    delete exToSave.primaryEquipment;
+  const onUpdateExercise = useCallback(async (exercise: Exercise) => {
+    await updateExercise(exercise);
+    await refresh();
+  }, [refresh]);
 
-    await db.add('exercises', exToSave as any);
-    await fetchExercises();
+  const onDeleteExercise = useCallback(async (id: number) => {
+    await deleteExercise(id);
+    await refresh();
+  }, [refresh]);
+
+  return { 
+    exercises, 
+    loading, 
+    addExercise: onAddExercise, 
+    updateExercise: onUpdateExercise, 
+    deleteExercise: onDeleteExercise, 
+    refresh 
   };
-
-  const updateExercise = async (exercise: Exercise) => {
-    if (!exercise.id) return;
-
-    const errors = validateSchema(exercise, exerciseValidators);
-    if (Object.keys(errors).length > 0) throw errors;
-
-    const db = await dbPromise;
-    // Dehydrate for storage
-    const exToSave = {
-        ...exercise,
-        tagIds: (exercise.tags || []).map(t => t.id).filter(Boolean) as number[],
-        primaryEquipmentIds: (exercise.primaryEquipment || []).map(i => i.id).filter(Boolean) as number[]
-    };
-    // @ts-ignore
-    delete exToSave.tags;
-    // @ts-ignore
-    delete exToSave.primaryEquipment;
-
-    await db.put('exercises', exToSave as any);
-    await fetchExercises();
-  };
-
-  const deleteExercise = async (id: number) => {
-    const db = await dbPromise;
-    await db.delete('exercises', id);
-    await fetchExercises();
-  };
-
-  return { exercises, loading, addExercise, updateExercise, deleteExercise, refresh: fetchExercises };
 }
