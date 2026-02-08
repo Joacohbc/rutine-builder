@@ -115,6 +115,8 @@
     "title": "Manage Tags",
     "addNew": "Add New Tag",
     "viewAll": "View All",
+    "filterCustom": "Custom",
+    "filterAll": "All",
     "createTag": "Create Tag",
     "editTag": "Edit Tag",
     "deleteTitle": "Delete Tag",
@@ -123,7 +125,8 @@
     "namePlaceholder": "e.g., Pull, Heavy",
     "color": "Color",
     "selectColor": "Select color {{color}}",
-    "noTags": "No tags found. Create one to get started.",
+    "noTags": "No tags found.",
+    "noCustomTags": "No custom tags found. Create one to get started.",
     "addPlaceholder": "Add custom tag..."
   },
   "settings": {

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { ColorPicker } from '@/components/ui/ColorPicker';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Form, type FormFieldValues } from '@/components/ui/Form';
 import { tagValidators, validators } from '@/lib/validations';
 import type { Tag } from '@/types';
@@ -22,6 +23,11 @@ export default function ManageTagsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [tagToDelete, setTagToDelete] = useState<Tag | null>(null);
+  const [filter, setFilter] = useState<'custom' | 'all'>('custom');
+
+  const filteredTags = filter === 'custom' 
+    ? tags.filter(tag => !tag.system) 
+    : tags;
 
   const handleOpenForm = (tag?: Tag) => {
     if (tag) {
@@ -80,8 +86,20 @@ export default function ManageTagsPage() {
           {t('tags.addNew', 'Add New Tag')}
         </Button>
 
+        <div className="flex justify-end">
+          <SegmentedControl
+            options={[
+              { value: 'custom', label: t('tags.filterCustom', 'Custom') },
+              { value: 'all', label: t('tags.filterAll', 'All') },
+            ]}
+            value={filter}
+            onChange={setFilter}
+            variant="primary"
+          />
+        </div>
+
         <div className="flex flex-col gap-2">
-          {tags.map((tag) => (
+          {filteredTags.map((tag) => (
             <TagItem
               key={tag.id}
               tag={tag}
@@ -91,9 +109,11 @@ export default function ManageTagsPage() {
             />
           ))}
           
-          {tags.length === 0 && (
+          {filteredTags.length === 0 && (
             <div className="text-center py-10 text-slate-500 dark:text-slate-400">
-              {t('tags.noTags', 'No tags found. Create one to get started.')}
+              {filter === 'custom'
+                ? t('tags.noCustomTags', 'No custom tags found. Create one to get started.')
+                : t('tags.noTags', 'No tags found.')}
             </div>
           )}
         </div>
