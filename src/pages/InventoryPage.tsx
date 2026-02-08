@@ -57,6 +57,27 @@ export default function InventoryPage() {
     setItemToDelete(id);
   };
 
+  if (isFormOpen && editingItem !== null) {
+    return (
+      <InventoryForm
+        item={editingItem}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingItem(null);
+        }}
+        onSave={async (item) => {
+          if (editingItem && editingItem.id) {
+            await updateItem({ ...item, id: editingItem.id });
+          } else {
+            await addItem(item);
+          }
+          setIsFormOpen(false);
+          setEditingItem(null);
+        }}
+      />
+    );
+  }
+
   return (
     <Layout
       header={
@@ -177,21 +198,6 @@ export default function InventoryPage() {
       >
         <Icon name="add" size={32} />
       </Button>
-
-      {isFormOpen && (
-        <InventoryForm
-          item={editingItem}
-          onClose={() => setIsFormOpen(false)}
-          onSave={async (item) => {
-            if (editingItem && editingItem.id) {
-              await updateItem({ ...item, id: editingItem.id });
-            } else {
-              await addItem(item);
-            }
-            setIsFormOpen(false);
-          }}
-        />
-      )}
 
       <ConfirmationDialog
         isOpen={!!itemToDelete}
